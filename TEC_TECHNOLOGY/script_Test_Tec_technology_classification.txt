@@ -1,0 +1,290 @@
+CREATE OR REPLACE TABLE rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.image_sdds_Technology_classification AS
+SELECT
+    b.id_tec_technology AS technology_id_sk,
+    b.key_tec_technology AS technology_source_id_sk,
+    b.cod_tec_technology AS technology_code_sk,
+    b.txt_tec_version AS technology_version_sk,
+    b.flg_lastversion AS last_technology_version_flag_sk,
+    CASE
+        WHEN b.txt_tec_version = (
+            SELECT MAX(sub.txt_tec_version)
+            FROM rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology AS sub
+            WHERE (
+                sub.key_tec_publish_status = 1 OR
+                (sub.key_tec_publish_status = 3 AND sub.flg_lastversion = false AND sub.sys_dat_end IS NULL)
+            ) AND sub.cod_tec_technology = b.cod_tec_technology
+            GROUP BY sub.cod_tec_technology
+        )
+        THEN TRUE
+        ELSE FALSE
+    END AS last_technology_published_version_flag_sk,
+    a.cod_metier AS technology_metier_code_sk,
+    a.nam_metier_en AS technology_metier_name_en_sk,
+    a.nam_metier_fr AS technology_metier_name_fr_sk,
+    a.cod_technology_type AS type_source_id_sk,
+    a.nam_technology_type_en AS type_name_en_sk,
+    a.nam_technology_type_fr AS type_name_fr_sk
+FROM
+    rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology AS b
+LEFT JOIN
+    rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_technology AS a
+ON
+    b.id_tec_technology = a.id_tec_technology
+WHERE
+    b.id_tec_technology IS NOT NULL AND
+    b.sys_dat_end IS NULL;
+
+
+
+
+
+    CREATE or REPLACE  table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.comparaison_sdds_Technology_classification` AS
+
+
+
+
+SELECT
+ 
+
+   t1.technology_id ,t2.technology_id_sk,
+
+      CASE
+
+        WHEN t1.technology_id = t2.technology_id_sk  Or  (t1.technology_id is null  AND t2.technology_id_sk is null  ) THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_technology_id,
+
+
+
+      t1.technology_source_id , t2.technology_source_id_sk,
+      CASE
+
+        WHEN t1.technology_source_id = t2.technology_source_id_sk  Or  (t1.technology_source_id  is null  AND t2.technology_source_id_sk is null  )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_technology_source_id,
+
+
+       t1.technology_code , t2.technology_code_sk,
+       CASE
+
+        WHEN t1.technology_code = t2.technology_code_sk  Or  (t1.technology_code  is null  AND t2.technology_code_sk  is null  )   THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_technology_code ,
+
+
+
+       t1.technology_version , t2.technology_version_sk,
+       CASE
+
+        WHEN t1.technology_version  = t2.technology_version_sk   Or  (t1.technology_version  is null  AND t2.technology_version_sk  is null  )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_technology_version ,
+
+
+
+       t1.last_technology_version_flag , t2.last_technology_version_flag_sk,
+       CASE
+
+        WHEN t1.last_technology_version_flag = t2.last_technology_version_flag_sk  Or  (t1.last_technology_version_flag  is null  AND t2.last_technology_version_flag_sk  is null  )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_last_technology_version_flag ,
+
+
+
+       t1.last_technology_published_version_flag, t2.last_technology_published_version_flag_sk ,
+       CASE
+
+        WHEN t1.last_technology_published_version_flag = t2.last_technology_published_version_flag_sk 
+        
+          Or  (t1.last_technology_published_version_flag  is null  AND t2.last_technology_published_version_flag_sk is null  )   THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_last_technology_published_version_flag,
+      
+
+
+
+       t1.technology_metier_code, t2.technology_metier_code_sk ,
+       CASE
+
+        WHEN t1.technology_metier_code = t2.technology_metier_code_sk    
+        
+          Or  (t1.technology_metier_code  is null  AND t2.technology_metier_code_sk  is null  ) THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_technology_metier_code,
+
+
+
+       t1.technology_metier_name_en, t2.technology_metier_name_en_sk ,
+       CASE
+
+        WHEN t1.technology_metier_name_en = t2.technology_metier_name_en_sk    Or  (t1.technology_metier_name_en   is null  AND t2.technology_metier_name_en_sk  is null  )   THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_technology_metier_name_en,
+
+
+       t1.technology_metier_name_fr, t2.technology_metier_name_fr_sk ,
+       CASE
+
+        WHEN t1.technology_metier_name_fr = t2.technology_metier_name_fr_sk   Or  (t1.technology_metier_name_fr    is null  AND t2.technology_metier_name_fr_sk   is null  )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_technology_metier_name_fr,
+
+
+
+
+         t1.type_source_id, t2.type_source_id_sk ,
+       CASE
+
+        WHEN t1.type_source_id = t2.type_source_id_sk     Or  (t1.type_source_id   is null  AND t2.type_source_id_sk  is null  )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_type_source_id,
+
+
+
+        t1.type_name_en, t2.type_name_en_sk,
+       CASE
+
+        WHEN t1.type_name_en = t2.type_name_en_sk  Or  (t1.type_name_en   is null  AND t2.type_name_en_sk  is null  )   THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_type_name_en,
+
+
+
+       t1.type_name_fr, t2.type_name_fr_sk,
+       CASE
+
+        WHEN t1.type_name_fr = t2.type_name_fr_sk  Or  (t1.type_name_fr  is null  AND t2.type_name_fr_sk  is null  )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_type_name_fr,
+
+
+   
+
+      
+
+      FROM  `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9ad_technology_eu_pd.tec_technology_classification` AS t1  full outer  join
+
+
+       `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.image_sdds_Technology_classification` AS t2
+
+       
+     on
+
+      (t1.technology_id = t2.technology_id_sk) 
+
+
+    ORDER BY
+
+     t1.technology_id;
+
+
+
+
+
+### the final result with nombre of ok for each column
+
+
+
+
+
+
+
+
+CREATE or replace table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.result_sdds_Technology_classification` AS
+
+
+
+
+SELECT
+
+  'TEC - Technology_classification' AS business_object,
+
+  column_name,
+
+  COUNTIF(column_value = 'OK') AS ok_count,
+
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count
+
+FROM (
+
+  SELECT
+
+status_technology_id,
+status_technology_source_id,
+status_technology_code,
+status_technology_version,
+status_last_technology_version_flag,
+status_last_technology_published_version_flag,
+status_technology_metier_code,
+status_technology_metier_name_en,
+status_technology_metier_name_fr,
+status_type_source_id,
+status_type_name_en,
+status_type_name_fr
+
+
+    
+
+
+
+
+  FROM
+
+    rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.comparaison_sdds_Technology_classification
+
+)
+
+UNPIVOT (column_value FOR column_name IN (    
+
+status_technology_id,
+status_technology_source_id,
+status_technology_code,
+status_technology_version,
+status_last_technology_version_flag,
+status_last_technology_published_version_flag,
+status_technology_metier_code,
+status_technology_metier_name_en,
+status_technology_metier_name_fr,
+status_type_source_id,
+status_type_name_en,
+status_type_name_fr
+
+  
+
+
+
+
+
+))
+
+WHERE
+
+  column_value IN ('OK', 'DIFFERENT')
+
+GROUP BY
+
+  column_name;

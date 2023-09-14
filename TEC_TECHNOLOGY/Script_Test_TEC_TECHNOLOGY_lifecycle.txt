@@ -1,0 +1,425 @@
+
+
+
+
+/********************************************/
+
+
+
+
+/********* BUSINESS VALIDATION TEST *********/
+
+
+
+
+/* SDDS-SF : Technology            ***************/
+
+
+
+
+/* Table-BO : TEC - Technology_lifecycle **********/
+
+
+
+
+/* Requestor : ******************************/
+
+
+
+
+/* Author :YONGA fils jacques     ******************************/
+
+
+
+
+/* Creation date : 07/09/2023  *************************/
+
+
+
+
+/* Comment :   ******************************/
+
+
+
+
+/* Update date :  10/09/2023 **************************/
+
+
+
+
+/*  *****************/
+
+
+/*DROP  TABLE rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.Dat;*/
+
+
+CREATE OR REPLACE TABLE rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.Dat AS
+select
+
+  cod_tec_technology,
+
+ MIN(dat_created) AS dat_creation
+
+FROM rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology
+
+where sys_dat_end IS NULL
+
+GROUP BY  cod_tec_technology;
+
+
+ 
+
+
+CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.image_sdds_Technology_lifecycle AS
+
+
+
+
+SELECT 
+DISTINCT
+
+b.id_tec_technology as  technology_id_sk,
+
+b.key_tec_technology as  technology_source_id_sk,
+
+b.cod_tec_technology as  technology_code_sk,
+
+b.txt_tec_version as   technology_version_sk,
+
+b.flg_lastversion as  last_technology_version_flag_sk,
+
+
+  CASE
+   WHEN b.txt_tec_version = (
+   SELECT MAX(sub.txt_tec_version)
+   FROM  rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology  AS sub
+   WHERE (
+    sub.key_tec_publish_status  = 1 OR
+   (sub.key_tec_publish_status  = 3 AND sub.flg_lastversion is FALSE and sub.sys_dat_end IS NULL)
+     ) AND sub.cod_tec_technology = b.cod_tec_technology
+       GROUP BY sub.cod_tec_technology
+      ) THEN TRUE
+   ELSE FALSE
+  END AS last_technology_published_version_flag_sk,
+
+
+ c.key_scl_attribute_occ AS  technology_status_source_id_sk,
+
+  
+
+a.cod_technology_status as technology_status_code_sk,
+
+a.nam_technology_status_en as technology_status_name_en_sk,
+
+a.nam_technology_status_fr as technology_status_name_fr_sk,
+
+b.key_tec_publish_status as technology_publication_status_source_id_sk,
+
+a.nam_technology_publish_status_en as technology_publication_status_name_en_sk,
+
+a.nam_technology_publish_status_fr as technology_publication_status_name_fr_sk,
+
+d.dat_creation as  technology_creation_date_sk,
+
+b.dat_created as technology_edition_date_sk
+
+
+
+from  rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology   as b  
+
+left join  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_technology_attribute  as c 
+on b.id_tec_technology =c.id_tec_technology and c.key_scl_attribute_ref = 5  
+
+left join  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_technology  as   a on b.id_tec_technology = a.id_tec_technology  
+left join rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.Dat as d on b.cod_tec_technology =d.cod_tec_technology
+where
+  b.sys_dat_end IS NULL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # exhaustive result (comparaison between each 2 columns in the tables and its status ok/ko)
+
+
+
+
+
+
+CREATE OR REPLACE TABLE `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.comparaison_sdds_Technology_lifecycle` AS
+
+SELECT
+
+   DISTINCT
+
+   
+
+    
+    t1.technology_id,
+    t2.technology_id_sk,
+    CASE
+        WHEN t1.technology_id = t2.technology_id_sk OR (t1.technology_id IS NULL AND t2.technology_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_id,
+
+
+
+    t1.technology_source_id,
+    t2.technology_source_id_sk,
+    CASE
+        WHEN t1.technology_source_id = t2.technology_source_id_sk OR (t1.technology_source_id IS NULL AND t2.technology_source_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_source_id,
+    t1.technology_code,
+    t2.technology_code_sk,
+    CASE
+        WHEN t1.technology_code = t2.technology_code_sk OR (t1.technology_code IS NULL AND t2.technology_code_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_code,
+    t1.technology_version,
+    t2.technology_version_sk,
+    CASE
+        WHEN t1.technology_version = t2.technology_version_sk OR (t1.technology_version IS NULL AND t2.technology_version_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_version,
+    t1.last_technology_version_flag,
+    t2.last_technology_version_flag_sk,
+    CASE
+        WHEN t1.last_technology_version_flag = t2.last_technology_version_flag_sk OR (t1.last_technology_version_flag IS NULL AND t2.last_technology_version_flag_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_last_technology_version_flag,
+
+
+
+
+
+
+    t1.last_technology_published_version_flag,
+    t2.last_technology_published_version_flag_sk,
+    CASE
+        WHEN t1.last_technology_published_version_flag = t2.last_technology_published_version_flag_sk OR (t1.last_technology_published_version_flag IS NULL AND t2.last_technology_published_version_flag_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_last_technology_published_version_flag,
+
+
+
+   t1.technology_status_source_id,
+    t2.technology_status_source_id_sk,
+    CASE
+        WHEN t1.technology_status_source_id = t2.technology_status_source_id_sk
+        
+         OR (t1.technology_status_source_id IS NULL AND t2.technology_status_source_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_status_source_id,
+
+
+
+
+
+    t1.technology_status_code,
+    t2.technology_status_code_sk,
+    CASE
+        WHEN t1.technology_status_code = t2.technology_status_code_sk
+        
+         OR (t1.technology_status_code IS NULL AND t2.technology_status_code_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_status_code,
+
+
+
+
+    
+    t1.technology_status_name_en,
+    t2.technology_status_name_en_sk,
+    CASE
+        WHEN t1.technology_status_name_en  = t2.technology_status_name_en_sk
+        
+         OR (t1.technology_status_name_en IS NULL AND t2.technology_status_name_en_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_status_name_en,
+
+
+
+     t1.technology_status_name_fr,
+    t2.technology_status_name_fr_sk,
+    CASE
+        WHEN t1.technology_status_name_fr  = t2.technology_status_name_fr_sk
+        
+         OR (t1.technology_status_name_fr IS NULL AND t2.technology_status_name_fr_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_status_name_fr,
+
+
+
+     t1.technology_publication_status_source_id,
+    t2.technology_publication_status_source_id_sk,
+    CASE
+        WHEN t1.technology_publication_status_source_id  = t2.technology_publication_status_source_id_sk
+        
+         OR (t1.technology_publication_status_source_id  IS NULL AND t2.technology_publication_status_source_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_publication_status_source_id,
+
+
+
+
+    t1.technology_publication_status_name_en,
+    t2.technology_publication_status_name_en_sk,
+    CASE
+        WHEN t1.technology_publication_status_name_en   = t2.technology_publication_status_name_en_sk
+        
+         OR (t1.technology_publication_status_name_en   IS NULL AND t2.technology_publication_status_name_en_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_publication_status_name_en,
+
+
+
+
+    t1.technology_publication_status_name_fr,
+    t2.technology_publication_status_name_fr_sk,
+    CASE
+        WHEN t1.technology_publication_status_name_fr   = t2.technology_publication_status_name_fr_sk
+        
+         OR (t1.technology_publication_status_name_fr   IS NULL AND t2.technology_publication_status_name_fr_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_publication_status_name_fr,
+
+
+
+
+    
+    t1.technology_creation_date,
+    t2.technology_creation_date_sk,
+    CASE
+        WHEN t1.technology_creation_date   = t2.technology_creation_date_sk
+        
+         OR (t1.technology_creation_date   IS NULL AND t2.technology_creation_date_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_creation_date,
+
+
+
+      t1.technology_edition_date,
+    t2.technology_edition_date_sk,
+    CASE
+        WHEN t1.technology_edition_date  = t2.technology_edition_date_sk
+        
+         OR (t1.technology_edition_date   IS NULL AND t2.technology_edition_date_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_edition_date,
+
+
+
+   
+
+
+
+FROM
+     `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9ad_technology_eu_pd.tec_technology_lifecycle` AS t1
+full JOIN
+    `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.image_sdds_Technology_lifecycle` AS t2
+ON
+    t1.technology_id = t2.technology_id_sk 
+   
+   
+  
+    
+    
+ORDER BY
+     t1.technology_id ;
+
+
+
+
+
+
+### the final result with nombre of ok for each column
+
+
+
+
+
+
+
+
+CREATE or replace table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.result_sdds_Technology_lifecycle` AS
+
+
+
+
+SELECT
+
+  'TEC - Technology_lifecycle' AS business_object,
+
+  column_name,
+
+  COUNTIF(column_value = 'OK') AS ok_count,
+
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count
+
+FROM (
+
+  SELECT
+
+status_technology_id,
+status_technology_source_id,
+status_technology_code,
+status_technology_version,
+status_last_technology_version_flag,
+status_last_technology_published_version_flag,
+status_technology_status_source_id,
+status_technology_status_code,
+status_technology_status_name_en,
+status_technology_status_name_fr,
+status_technology_publication_status_source_id,
+status_technology_publication_status_name_en,
+status_technology_publication_status_name_fr,
+status_technology_creation_date,
+status_technology_edition_date
+
+
+  FROM
+
+    rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.comparaison_sdds_Technology_lifecycle
+)
+
+UNPIVOT (column_value FOR column_name IN (    
+
+
+status_technology_id,
+status_technology_source_id,
+status_technology_code,
+status_technology_version,
+status_last_technology_version_flag,
+status_last_technology_published_version_flag,
+status_technology_status_source_id,
+status_technology_status_code,
+status_technology_status_name_en,
+status_technology_status_name_fr,
+status_technology_publication_status_source_id,
+status_technology_publication_status_name_en,
+status_technology_publication_status_name_fr,
+status_technology_creation_date,
+status_technology_edition_date
+
+
+
+
+
+))
+
+WHERE
+
+  column_value IN ('OK', 'DIFFERENT')
+
+GROUP BY
+
+  column_name;

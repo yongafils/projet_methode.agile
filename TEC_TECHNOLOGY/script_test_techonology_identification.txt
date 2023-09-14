@@ -1,0 +1,687 @@
+
+
+
+
+/********************************************/
+
+
+
+
+/********* BUSINESS VALIDATION TEST *********/
+
+
+
+
+/* SDDS-SF : Technology            ***************/
+
+
+
+
+/* Table-BO : TEC - Technology identification **********/
+
+
+
+
+/* Requestor : ******************************/
+
+
+
+
+/* Author :YONGA fils jacques     ******************************/
+
+
+
+
+/* Creation date : 12/09/2023  *************************/
+
+
+
+
+/* Comment :   ******************************/
+
+
+
+
+/* Update date :  **************************/
+
+
+
+
+/*  *****************/
+
+
+CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.sub_query_1  as     
+
+
+SELECT
+        dim_project.id_orc_project as  id_orc_project,
+        dim_project.key_orc_project as key_orc_project,
+        dim_project.cod_orc_project as cod_orc_project,
+        dim_project_type.cod_orc_project_type as cod_orc_project_type,
+        fact_project_relation.id_orc_project_parent as id_orc_project_parent,
+        proj_parent.key_orc_project as key_orc_project_parent,
+        proj_parent.cod_orc_project as cod_orc_project_parent
+
+    FROM `rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_orc_eu_pd.tbl_dim_project` dim_project
+
+    LEFT OUTER JOIN `rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_orc_eu_pd.tbl_dim_project_type` dim_project_type
+    ON dim_project.id_orc_project_type = dim_project_type.id_orc_project_type AND dim_project_type.sys_dat_end is null
+    LEFT OUTER JOIN `rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_orc_eu_pd.tbl_fct_project_rel` fact_project_relation
+             ON dim_project.id_orc_project = fact_project_relation.id_orc_project_child 
+             AND fact_project_relation.sys_dat_end is null 
+             AND fact_project_relation.sys_flg_active 
+             AND fact_project_relation.cod_orc_hierarchy='SPRJ_PRJ'
+    LEFT OUTER JOIN `rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_orc_eu_pd.tbl_dim_project` proj_parent
+              ON proj_parent.id_orc_project = fact_project_relation.id_orc_project_parent
+             AND proj_parent.sys_dat_end is null
+    WHERE
+    ( (dim_project.flg_template=false AND dim_project.sys_delete_type<>'physical')
+        OR
+        (dim_project.sys_app_origin='IT')
+    ) AND dim_project.sys_dat_end IS NULL;
+
+
+
+
+
+    CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.sub_query_2  as  
+
+    SELECT 
+   LEAD(dat_created, 1, NULL) OVER (PARTITION BY cod_tec_technology ORDER BY dat_created )
+ as dat_created,
+    cod_tec_technology
+    from
+
+    rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology
+    where sys_dat_end IS NULL;
+
+
+
+CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.first_version as 
+ select 
+
+MIN(txt_tec_version ) as txt_tec_version ,
+cod_tec_technology
+from rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_technology 
+
+group by cod_tec_technology;
+
+CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.first_version_creator as    
+select 
+distinct
+a.nam_creator_first_name ,
+a.nam_creator_last_name,
+b.txt_tec_version ,
+b.cod_tec_technology
+from rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_technology  as a     
+LEFT JOIN rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.first_version  as b   
+on a.cod_tec_technology =b.cod_tec_technology and a.txt_tec_version =b.txt_tec_version;
+
+
+
+
+
+
+
+ 
+
+
+CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.image_sdds_Technology_identification  AS
+
+
+
+
+SELECT 
+DISTINCT
+
+a.id_tec_technology as  technology_id_sk,
+
+a.key_tec_technology as  technology_source_id_sk,
+
+a.cod_tec_technology as  technology_code_sk,
+a.nam_tec_technology  as technology_name_sk,
+b.txt_value_en as technology_description_name_en_sk,
+b.txt_value_fr as technology_description_name_fr_sk,
+
+
+
+
+
+a.txt_tec_version as   technology_version_sk,
+
+a.flg_lastversion as  last_technology_version_flag_sk,
+
+
+  CASE
+   WHEN a.txt_tec_version = (
+   SELECT MAX(sub.txt_tec_version)
+   FROM  rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology  AS sub
+   WHERE (
+    sub.key_tec_publish_status  = 1 OR
+   (sub.key_tec_publish_status  = 3 AND sub.flg_lastversion is FALSE and sub.sys_dat_end IS NULL)
+     ) AND sub.cod_tec_technology = a.cod_tec_technology
+       GROUP BY sub.cod_tec_technology
+      ) THEN TRUE
+   ELSE FALSE
+  END AS last_technology_published_version_flag_sk,
+
+CASE
+WHEN c.cod_orc_project_type = 'x_projet' THEN c.id_orc_project
+WHEN c.cod_orc_project_type = 'x_sous_proj' THEN c.id_orc_project_parent
+ELSE '#NA' END AS ri_project_id_sk,
+
+
+ CASE
+ WHEN c.cod_orc_project_type = 'x_projet' THEN c.key_orc_project 
+ WHEN c.cod_orc_project_type = 'x_sous_proj' THEN c.key_orc_project_parent
+  ELSE NULL 
+  END AS ri_project_source_id_sk,
+
+
+
+  CASE
+  WHEN c.cod_orc_project_type = 'x_projet' THEN c.cod_orc_project
+  WHEN c.cod_orc_project_type = 'x_sous_proj' THEN c.cod_orc_project_parent
+   ELSE NULL 
+   END AS ri_project_code_sk,
+
+
+
+    CASE WHEN c.cod_orc_project_type = 'x_projet' THEN '#NA'
+         WHEN c.cod_orc_project_type = 'x_sous_proj' THEN c.id_orc_project
+         ELSE '#NA' 
+         END AS ri_sub_project_id_sk,
+
+
+
+ CASE 
+ WHEN c.cod_orc_project_type = 'x_projet' THEN NULL
+WHEN c.cod_orc_project_type = 'x_sous_proj' THEN c.key_orc_project 
+ ELSE NULL END AS ri_sub_project_source_id_sk,
+
+
+
+ CASE
+  WHEN c.cod_orc_project_type = 'x_projet' THEN NULL 
+ WHEN c.cod_orc_project_type = 'x_sous_proj' THEN c.cod_orc_project
+ ELSE NULL END AS ri_sub_project_code_sk,
+  
+
+
+d.sys_key_source as technology_creator_source_id_sk,
+
+d.cod_ntlogin as technology_creator_code_sk,
+  
+g.nam_creator_first_name as technology_creator_first_name_sk,
+
+g.nam_creator_last_name as technology_creator_last_name_sk,
+
+d.sys_key_source as technology_editor_source_id_sk,
+
+d.cod_ntlogin as technology_editor_code_sk,
+
+f.nam_creator_first_name as technology_editor_first_name_sk,
+
+f.nam_creator_last_name as technology_editor_last_name_sk,
+
+
+
+
+
+
+a.dat_created as  technology_version_start_date_sk,
+
+
+LEAD(a.dat_created, 1, NULL) OVER (PARTITION BY a.cod_tec_technology ORDER BY a.dat_created )
+ as technology_version_end_date_sk
+
+
+
+from  rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology   as a 
+
+left join  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_technology_attribute  as b
+on a.id_tec_technology =b.id_tec_technology and b.cod_scl_attribute_ref = 'DESCRIPTION'
+
+left join  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.sub_query_1  as   c on a.id_tec_technology = c.id_orc_project 
+
+left join  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_technology  as f on a.id_tec_technology =f.id_tec_technology 
+
+
+left join  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_mdm_eu_pd.tbl_dim_user as  d on a.id_tec_technology = d.id_user 
+
+left join rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.first_version_creator  as g on a.cod_tec_technology =g.cod_tec_technology and a.txt_tec_version =g.txt_tec_version
+
+
+
+
+
+where a.sys_dat_end IS NULL;
+
+
+
+  # exhaustive result (comparaison between each 2 columns in the tables and its status ok/ko)
+
+
+
+
+
+
+CREATE OR REPLACE TABLE `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.comparaison_sdds_Technology_identification` AS
+
+SELECT
+
+   DISTINCT
+
+   
+
+    
+    t1.technology_id,
+    t2.technology_id_sk,
+    CASE
+        WHEN t1.technology_id = t2.technology_id_sk OR (t1.technology_id IS NULL AND t2.technology_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_id,
+
+
+
+    t1.technology_source_id,
+    t2.technology_source_id_sk,
+    CASE
+        WHEN t1.technology_source_id = t2.technology_source_id_sk OR (t1.technology_source_id IS NULL AND t2.technology_source_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_source_id,
+
+
+    t1.technology_code,
+    t2.technology_code_sk,
+    CASE
+        WHEN t1.technology_code = t2.technology_code_sk OR (t1.technology_code IS NULL AND t2.technology_code_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_code,
+
+
+
+
+    t1.technology_name,
+    t2.technology_name_sk,
+    CASE
+        WHEN t1.technology_name = t2.technology_name_sk OR (t1.technology_name  IS NULL AND t2.technology_name_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_name,
+
+
+
+
+    
+    t1.technology_description_name_en,
+    t2.technology_description_name_en_sk,
+    CASE
+        WHEN t1.technology_description_name_en = t2.technology_description_name_en_sk 
+         OR (t1.technology_description_name_en  IS NULL AND t2.technology_description_name_en_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_description_name_en,
+
+
+       t1.technology_description_name_fr,
+    t2.technology_description_name_fr_sk,
+    CASE
+        WHEN t1.technology_description_name_fr = t2.technology_description_name_fr_sk 
+         OR (t1.technology_description_name_fr  IS NULL AND t2.technology_description_name_fr_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_description_name_fr,
+
+
+
+
+
+
+
+
+    t1.technology_version,
+    t2.technology_version_sk,
+    CASE
+        WHEN t1.technology_version = t2.technology_version_sk OR (t1.technology_version IS NULL AND t2.technology_version_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_version,
+
+
+    t1.last_technology_version_flag,
+    t2.last_technology_version_flag_sk,
+    CASE
+        WHEN t1.last_technology_version_flag = t2.last_technology_version_flag_sk OR (t1.last_technology_version_flag IS NULL AND t2.last_technology_version_flag_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_last_technology_version_flag,
+
+
+
+
+
+
+    t1.last_technology_published_version_flag,
+    t2.last_technology_published_version_flag_sk,
+    CASE
+        WHEN t1.last_technology_published_version_flag = t2.last_technology_published_version_flag_sk OR (t1.last_technology_published_version_flag IS NULL AND t2.last_technology_published_version_flag_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_last_technology_published_version_flag,
+
+
+
+    t1.ri_project_id,
+    t2.ri_project_id_sk,
+    CASE
+        WHEN t1.ri_project_id = t2.ri_project_id_sk
+        
+         OR (t1.ri_project_id IS NULL AND t2.ri_project_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_ri_project_id,
+
+
+
+
+    t1.ri_project_source_id,
+    t2.ri_project_source_id_sk,
+    CASE
+        WHEN t1.ri_project_source_id  = t2.ri_project_source_id_sk
+        
+         OR (t1.ri_project_source_id IS NULL AND t2.ri_project_source_id_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_ri_project_source_id,
+
+
+
+
+
+    t1.ri_project_code,
+    t2.ri_project_code_sk,
+    CASE
+        WHEN t1.ri_project_code  = t2.ri_project_code_sk
+        
+         OR (t1.ri_project_code  IS NULL AND t2.ri_project_code_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_ri_project_code,
+
+
+
+    
+    t1.ri_sub_project_id,
+    t2.ri_sub_project_id_sk,
+    CASE
+        WHEN t1.ri_sub_project_id = t2.ri_sub_project_id_sk
+        
+         OR (t1.ri_sub_project_id  IS NULL AND t2.ri_sub_project_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_ri_sub_project_id,
+
+
+
+    t1.ri_sub_project_source_id,
+    t2.ri_sub_project_source_id_sk,
+    CASE
+        WHEN t1.ri_sub_project_source_id  = t2.ri_sub_project_source_id_sk
+        
+         OR (t1.ri_sub_project_source_id   IS NULL AND t2.ri_sub_project_source_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_ri_sub_project_source_id,
+
+
+    t1.ri_sub_project_code,
+    t2.ri_sub_project_code_sk,
+    CASE
+        WHEN t1.ri_sub_project_code = t2.ri_sub_project_code_sk
+        
+         OR (t1.ri_sub_project_code   IS NULL AND t2.ri_sub_project_code_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_ri_sub_project_code,
+
+
+
+    
+    t1.technology_creator_source_id,
+    t2.technology_creator_source_id_sk,
+    CASE
+        WHEN t1.technology_creator_source_id  = t2.technology_creator_source_id_sk
+        
+         OR (t1.technology_creator_source_id  IS NULL AND t2.technology_creator_source_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_creator_source_id,
+
+
+
+
+    t1.technology_creator_code,
+    t2.technology_creator_code_sk,
+    CASE
+        WHEN t1.technology_creator_code  = t2.technology_creator_code_sk
+        
+         OR (t1.technology_creator_code  IS NULL AND t2.technology_creator_code_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_creator_code,
+
+
+
+
+    t1.technology_creator_first_name,
+    t2.technology_creator_first_name_sk,
+    CASE
+        WHEN t1.technology_creator_first_name  = t2.technology_creator_first_name_sk
+        
+         OR (t1.technology_creator_first_name  IS NULL AND t2.technology_creator_first_name_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_creator_first_name,
+
+
+
+
+    
+    t1.technology_creator_last_name,
+    t2.technology_creator_last_name_sk,
+    CASE
+        WHEN t1.technology_creator_last_name  = t2.technology_creator_last_name_sk
+        
+         OR (t1.technology_creator_last_name   IS NULL AND t2.technology_creator_last_name_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_creator_last_name,
+
+
+
+    
+    t1.technology_editor_source_id,
+    t2.technology_editor_source_id_sk,
+    CASE
+        WHEN t1.technology_editor_source_id  = t2.technology_editor_source_id_sk
+        
+         OR (t1.technology_editor_source_id   IS NULL AND t2.technology_editor_source_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_editor_source_id,
+
+
+
+     
+    t1.technology_editor_code,
+    t2.technology_editor_code_sk,
+    CASE
+        WHEN t1.technology_editor_code  = t2.technology_editor_code_sk
+        
+         OR (t1.technology_editor_code   IS NULL AND t2.technology_editor_code_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_editor_code,
+
+
+
+    t1.technology_editor_first_name,
+    t2.technology_editor_first_name_sk,
+    CASE
+        WHEN t1.technology_editor_first_name  = t2.technology_editor_first_name_sk
+        
+         OR (t1.technology_editor_first_name  IS NULL AND t2.technology_editor_first_name_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_editor_first_name,
+
+
+
+    
+    t1.technology_editor_last_name,
+    t2.technology_editor_last_name_sk,
+    CASE
+        WHEN t1.technology_editor_last_name  = t2.technology_editor_last_name_sk
+        
+         OR (t1.technology_editor_last_name  IS NULL AND t2.technology_editor_last_name_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_editor_last_name,
+
+
+
+
+    
+    t1.technology_version_start_date,
+    t2.technology_version_start_date_sk,
+    CASE
+        WHEN t1.technology_version_start_date   = t2.technology_version_start_date_sk
+        
+         OR (t1.technology_version_start_date   IS NULL AND t2.technology_version_start_date_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_version_start_date,
+
+
+
+    
+    t1.technology_version_end_date,
+    t2.technology_version_end_date_sk,
+    CASE
+        WHEN t1.technology_version_end_date   = t2.technology_version_end_date_sk
+        
+         OR (t1.technology_version_end_date  IS NULL AND t2.technology_version_end_date_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_version_end_date,
+
+
+
+
+
+
+  
+   
+
+
+
+FROM
+     `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9ad_technology_eu_pd.tec_technology_identification` AS t1
+full JOIN
+    `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.image_sdds_Technology_identification` AS t2
+ON
+    t1.technology_id = t2.technology_id_sk 
+  
+   
+  
+    
+    
+ORDER BY
+     t1.technology_id ;
+
+
+
+
+
+
+### the final result with nombre of ok for each column
+
+
+
+
+
+
+
+
+CREATE or replace table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.result_sdds_technology_identification` AS
+
+
+
+
+SELECT
+
+  'TEC - technology_identification`' AS business_object,
+
+  column_name,
+
+  COUNTIF(column_value = 'OK') AS ok_count,
+
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count
+
+FROM (
+
+  SELECT
+
+status_technology_id,
+status_technology_source_id,
+status_technology_code,
+status_technology_name,
+status_technology_description_name_en,
+status_technology_description_name_fr,
+status_technology_version,
+status_last_technology_version_flag,
+status_last_technology_published_version_flag,
+status_ri_project_id,
+status_ri_project_source_id,
+status_ri_project_code,
+status_ri_sub_project_id,
+status_ri_sub_project_source_id,
+status_ri_sub_project_code,
+status_technology_creator_source_id,
+status_technology_creator_code,
+status_technology_creator_first_name,
+status_technology_creator_last_name,
+status_technology_editor_source_id,
+status_technology_editor_code,
+status_technology_editor_first_name,
+status_technology_editor_last_name,
+status_technology_version_start_date,
+status_technology_version_end_date
+
+
+  FROM
+
+    rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.comparaison_sdds_Technology_identification
+)
+
+UNPIVOT (column_value FOR column_name IN (    
+
+
+status_technology_id,
+status_technology_source_id,
+status_technology_code,
+status_technology_name,
+status_technology_description_name_en,
+status_technology_description_name_fr,
+status_technology_version,
+status_last_technology_version_flag,
+status_last_technology_published_version_flag,
+status_ri_project_id,
+status_ri_project_source_id,
+status_ri_project_code,
+status_ri_sub_project_id,
+status_ri_sub_project_source_id,
+status_ri_sub_project_code,
+status_technology_creator_source_id,
+status_technology_creator_code,
+status_technology_creator_first_name,
+status_technology_creator_last_name,
+status_technology_editor_source_id,
+status_technology_editor_code,
+status_technology_editor_first_name,
+status_technology_editor_last_name,
+status_technology_version_start_date,
+status_technology_version_end_date
+
+
+
+
+
+))
+
+WHERE
+
+  column_value IN ('OK', 'DIFFERENT')
+
+GROUP BY
+
+  column_name;
