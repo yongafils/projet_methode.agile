@@ -1,0 +1,199 @@
+/********************************************/
+
+/********* BUSINESS VALIDATION TEST *********/
+
+/* SDDS-SF : FGI           ***************/
+
+/* Table-BO : FGI - FIL - Full Ingredient Labelling - Officialization  **********/
+
+/* Requestor : ******************************/
+
+/* Author :YONGA Fils Jacques    ******************************/
+
+/* Creation date : 11/08/2023  *************************/
+
+/* Comment :   ******************************/
+
+/* Update date :  ***************************/
+
+/* Details of the update :  *****************/
+
+
+
+
+
+CREATE or replace table  rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_fil_full_ingredient_labelling_Officialization AS 
+
+SELECT 
+
+distinct
+
+a.id_fil_label as fil_id_sk ,
+a.ak_key_fil_label as fil_source_id_sk ,
+b.cod_fil as fil_number_sk ,
+a.id_formula as formula_id_sk ,
+a.key_formula as formula_source_id_sk,
+a.cod_formula as  formula_code_sk,
+c.flg_open_dev as  open_dev_formula_flag_sk,
+a.id_off_document as  document_id_sk,
+a.key_fil_document as document_source_id_sk,
+a.cod_off_document as  document_reference_sk,
+a.id_fle_composite as  gamme_id_sk,
+a.cod_fle_composite as gamme_number_sk
+
+from rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula as c
+left join rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_full_ingredient_labelling_eu_pd.tbl_dim_formula_officialization as a on c.id_formula =a.id_formula
+left join rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_full_ingredient_labelling_eu_pd.tbl_dim_label as b on a.id_fil_label =b.id_fil_label
+where  a.id_formula is not null and b.id_fil_label is not null;
+
+
+
+CREATE or replace TABLE  `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_full_ingredient_labelling_Officialization` AS 
+SELECT 
+      t1.fil_id,fil_id_sk, 
+      CASE 
+        WHEN t1.fil_id = t2.fil_id_sk  Or  (t1.fil_id is null  AND t2.fil_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fil_id,
+    
+      t1.fil_source_id,t2.fil_source_id_sk,
+      CASE 
+        WHEN t1.fil_source_id= t2.fil_source_id_sk Or  (t1.fil_source_id is null  AND t2.fil_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fil_source_id,
+
+      t1.fil_number,t2.fil_number_sk,
+      CASE 
+        WHEN t1.fil_number = t2.fil_number_sk Or  (t1.fil_number is null  AND t2.fil_number_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fil_number ,
+
+        t1.formula_id ,t2.formula_id_sk,
+      CASE 
+        WHEN t1.formula_id = t2.formula_id_sk Or  (t1.formula_id  is null  AND t2.formula_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_id ,
+
+
+       t1.formula_source_id ,t2.formula_source_id_sk,
+      CASE 
+        WHEN t1.formula_source_id  = t2.formula_source_id_sk  Or  (t1.formula_source_id  is null  AND t2.formula_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_source_id ,
+
+
+        t1.formula_code ,t2.formula_code_sk,
+      CASE 
+        WHEN t1.formula_code  = t2.formula_code_sk  Or  (t1.formula_code is null  AND t2.formula_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_code,
+
+
+       t1.open_dev_formula_flag,t2.open_dev_formula_flag_sk,
+      CASE 
+        WHEN t1.open_dev_formula_flag = t2.open_dev_formula_flag_sk  Or  (t1.open_dev_formula_flag is null  AND t2.open_dev_formula_flag_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_open_dev_formula_flag,
+
+
+
+      
+       t1.document_id,t2.document_id_sk,
+      CASE 
+        WHEN t1.document_id = t2.document_id_sk  Or  (t1.document_id is null  AND t2.document_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_document_id,
+
+
+      t1.document_source_id,t2.document_source_id_sk,
+      CASE 
+        WHEN t1.document_source_id= t2.document_source_id_sk  Or  (t1.document_source_id is null  AND t2.document_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_document_source_id,
+
+
+      
+      t1.document_reference,t2.document_reference_sk,
+      CASE 
+        WHEN t1.document_reference = t2.document_reference_sk  Or  (t1.document_reference  is null  AND t2.document_reference_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_document_reference,
+
+
+
+      
+      t1.gamme_id,t2.gamme_id_sk,
+      CASE 
+        WHEN t1.gamme_id = t2.gamme_id_sk Or  (t1.gamme_id  is null  AND t2.gamme_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_gamme_id,
+
+
+
+      
+      t1.gamme_number ,t2.gamme_number_sk,
+      CASE 
+        WHEN t1.gamme_number = t2.gamme_number_sk Or  (t1.gamme_number  is null  AND t2.gamme_number_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_gamme_number,
+      
+
+     FROM 
+      itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9aa_md_formula_general_information_eu_pd.fil_full_ingredient_labelling_officialization AS t1 full join 
+      rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_fil_full_ingredient_labelling_Officialization AS t2
+     on 
+      t1.fil_id = t2.fil_id_sk  and t1.formula_id =t2.formula_id_sk and t1.document_id =t2.document_id_sk and t1.gamme_id =t2.gamme_id_sk
+      where  t1.formula_id is not null and t1.fil_id is not null
+
+     ORDER BY 
+     t1.fil_id;
+
+
+### the final result with nombre of ok for each column 
+CREATE OR REPLACE TABLE  `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.result_sdds_md_fgi_fgi_full_ingredient_labelling_Officialization` AS
+SELECT 
+  'FGI - fgi_full_ingredient_labelling_Officialization' AS business_object,
+  column_name, 
+  COUNTIF(column_value = 'OK') AS ok_count, 
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count 
+FROM (
+  SELECT 
+status_fil_id,
+status_fil_source_id,
+status_fil_number,
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_open_dev_formula_flag,
+status_document_id,
+status_document_source_id,
+status_document_reference,
+status_gamme_id,
+status_gamme_number
+
+
+
+FROM 
+    rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_full_ingredient_labelling_Officialization 
+)
+UNPIVOT (column_value FOR column_name IN (    
+
+status_fil_id,
+status_fil_source_id,
+status_fil_number,
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_open_dev_formula_flag,
+status_document_id,
+status_document_source_id,
+status_document_reference,
+status_gamme_id,
+status_gamme_number
+
+
+)) 
+WHERE 
+  column_value IN ('OK', 'DIFFERENT')
+GROUP BY 
+  column_name

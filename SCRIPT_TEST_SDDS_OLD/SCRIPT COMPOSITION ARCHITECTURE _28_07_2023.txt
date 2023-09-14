@@ -1,0 +1,523 @@
+ 
+ 
+/********************************************/
+
+
+
+
+/********* BUSINESS VALIDATION TEST *********/
+
+
+
+
+/* SDDS-SF : Socle            ***************/
+
+
+
+
+/* Table-BO : Socle Composition architecture **********/
+
+
+
+
+/* Requestor : ******************************/
+
+
+
+
+/* Author :YONGA fils jacques     ******************************/
+
+
+
+
+/* Creation date : 28/07/2023  *************************/
+
+
+
+
+/* Comment :   ******************************/
+
+
+
+
+/* Update date :   ***************************/
+
+
+
+
+/*  *****************/
+
+
+
+CREATE  or replace VIEW rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.composition_architecture AS 
+
+Select distinct
+  id_scl_socle , key_scl_socle, id_scl_socle_composition ,key_scl_socle_composition , id_raw_material_ingredient  ,  key_raw_material_ingredient , cod_raw_material_ingredient  ,    typ_composition , concentration_min ,concentration_max, 
+
+ from  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_composition 
+  
+where cod_component_type ="RWM";
+
+
+
+
+ CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_composition_architecture AS
+
+SELECT DISTINCT
+
+  a.id_scl_socle AS socle_id_sk,
+
+  b.key_scl_socle AS socle_source_id_sk,
+
+  a.cod_scl_socle AS socle_code_sk,
+
+  b.id_scl_socle_composition AS socle_architecture_composition_id_sk,
+
+  b.key_scl_socle_composition  AS  socle_architecture_composition_source_id_sk,
+
+  a.txt_scl_socle_version AS socle_version_sk,
+
+  a.flg_lastversion AS last_socle_version_flag_sk,
+
+  a.flg_lastversion_published AS last_socle_published_version_flag_sk,
+
+  b.id_raw_material_ingredient  AS  component_raw_material_id_sk,
+
+  b.key_raw_material_ingredient AS  component_raw_material_source_sk,
+
+  b.cod_raw_material_ingredient  AS  component_raw_material_code_sk,
+
+  e.flg_rwm_primary AS component_primary_raw_material_flag_sk,
+
+  c.rm_category_code  AS  component_raw_material_category_code_sk,
+
+  c.rm_category_name_en AS component_raw_material_category_name_en_sk,
+    
+  c.rm_category_name_fr AS   component_raw_material_category_name_fr_sk,
+
+  b.typ_composition  AS  socle_architecture_logical_connectors_sk,
+
+  b.concentration_min AS  component_concentration_minimum_percentage_sk,
+
+  b.concentration_max  AS   component_concentration_maximum_percentage_sk
+
+
+   FROM rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_socle a
+
+  /*rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_socle*/
+
+
+INNER  JOIN  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.composition_architecture AS b ON
+
+a.id_scl_socle=b.id_scl_socle  
+
+left join   rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_rwm_eu_pd.tbl_dim_raw_material AS c ON
+
+ b.id_raw_material_ingredient =c.id_raw_material and sys_dat_end is null
+
+ left  join   rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_raw_material_eu_pd.tbl_dim_raw_material AS e ON
+ 
+ b.id_raw_material_ingredient =e.id_raw_material
+ 
+ where  cod_raw_material_ingredient is not null and  id_raw_material_ingredient is not null and rm_category_code not in ("STRM")and rm_category_name_en is not null and rm_category_name_fr is not null;
+
+
+
+ CREATE or REPLACE  table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.comparaison_sdds_socle_composition_architecture` AS
+
+
+
+
+SELECT
+
+   DISTINCT
+
+   t1.socle_id,t2.socle_id_sk,
+
+      CASE
+
+        WHEN t1.socle_id= t2.socle_id_sk	 THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_id,
+
+   
+
+      t1.socle_source_id,t2.socle_source_id_sk,
+
+      CASE
+
+        WHEN t1.socle_source_id = t2.socle_source_id_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_source_id,
+
+
+
+
+      t1.socle_code ,t2.socle_code_sk,
+
+      CASE
+
+        WHEN t1.socle_code = socle_code_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_code  ,
+
+      t1.socle_architecture_composition_id , t2.socle_architecture_composition_id_sk,
+
+        CASE
+
+        WHEN t1.socle_architecture_composition_id = t2.socle_architecture_composition_id_sk   and  (t1.socle_architecture_composition_id is  not null and t2.socle_architecture_composition_id_sk  is not null )THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_architecture_composition_id ,
+
+
+        t1.socle_architecture_composition_source_id , t2.socle_architecture_composition_source_id_sk,
+
+        CASE
+
+        WHEN t1.socle_architecture_composition_source_id = t2.socle_architecture_composition_source_id_sk   and  (t1.socle_architecture_composition_source_id is  not null and t2.socle_architecture_composition_source_id_sk is not null ) THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_architecture_composition_source_id ,
+
+
+
+
+         t1.socle_version,t2.socle_version_sk,
+
+      CASE
+
+        WHEN t1.socle_version = socle_version_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_version ,
+
+
+
+
+       t1.last_socle_version_flag,t2.last_socle_version_flag_sk,
+
+      CASE
+
+        WHEN t1.last_socle_version_flag = t2.last_socle_version_flag_sk Or (t1.last_socle_version_flag is  null and t2.last_socle_version_flag_sk is null ) THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_last_socle_version_flag,
+
+
+
+
+      t1.last_socle_published_version_flag ,t2.last_socle_published_version_flag_sk,
+
+      CASE
+       WHEN t1.last_socle_published_version_flag= t2.last_socle_published_version_flag_sk Or (t1.last_socle_published_version_flag is  null and t2.last_socle_published_version_flag_sk is  
+            null ) 
+            THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_last_socle_published_version_flag,
+
+
+
+
+       t1.component_raw_material_id,t2.component_raw_material_id_sk,
+
+      CASE
+
+        WHEN t1.component_raw_material_id = t2.component_raw_material_id_sk and  (t1.component_raw_material_id is not null and t2.component_raw_material_id_sk is not null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_component_raw_material_id,
+
+
+
+
+
+         t1.component_raw_material_source,t2.component_raw_material_source_sk,
+
+      CASE
+
+        WHEN t1.component_raw_material_source = t2.component_raw_material_source_sk Or (t1.component_raw_material_source is null and t2.component_raw_material_source_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_component_raw_material_source ,
+
+
+
+
+        t1.component_raw_material_code,t2.component_raw_material_code_sk,
+
+      CASE
+
+        WHEN t1.component_raw_material_code = t2.component_raw_material_code_sk Or (t1.component_raw_material_code is  null  and t2.component_raw_material_code_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_component_raw_material_code,
+
+
+
+        t1.component_primary_raw_material_flag,t2.component_primary_raw_material_flag_sk,
+
+      CASE
+
+        WHEN t1.component_primary_raw_material_flag = t2.component_primary_raw_material_flag_sk Or (t1.component_primary_raw_material_flag is  null  and t2.component_primary_raw_material_flag_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_component_primary_raw_material_flag,
+
+
+
+
+        t1.component_raw_material_category_code,t2.component_raw_material_category_code_sk,
+
+      CASE
+
+        WHEN t1.component_raw_material_category_code = t2.component_raw_material_category_code_sk Or (t1.component_raw_material_category_code is  null  and t2.component_raw_material_category_code_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_component_raw_material_category_code,
+
+
+         t1.component_raw_material_category_name_en,t2.component_raw_material_category_name_en_sk,
+
+      CASE
+
+        WHEN t1.component_raw_material_category_name_en = t2.component_raw_material_category_name_en_sk Or (t1.component_raw_material_category_name_en is  null  and t2.component_raw_material_category_name_en_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_component_raw_material_category_name_en,
+
+
+
+
+
+       t1.component_raw_material_category_name_fr,t2.component_raw_material_category_name_fr_sk,
+
+      CASE
+
+        WHEN t1.component_raw_material_category_name_fr = t2.component_raw_material_category_name_fr_sk Or (t1.component_raw_material_category_name_fr is  null  and t2.component_raw_material_category_name_fr_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_component_raw_material_category_name_fr,
+
+
+
+
+
+         t1.socle_architecture_logical_connectors,t2.socle_architecture_logical_connectors_sk,
+
+      CASE
+
+        WHEN t1.socle_architecture_logical_connectors = t2.socle_architecture_logical_connectors_sk Or (t1.socle_architecture_logical_connectors is  null  and t2.socle_architecture_logical_connectors_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_architecture_logical_connectors,
+
+
+
+
+      
+         t1.component_concentration_maximum_percentage,t2.component_concentration_maximum_percentage_sk,
+
+      CASE
+
+        WHEN t1.component_concentration_maximum_percentage = t2.component_concentration_maximum_percentage_sk Or
+
+         (t1.component_concentration_maximum_percentage is  null  and t2.component_concentration_maximum_percentage_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_component_concentration_maximum_percentage,
+
+
+        t1.component_concentration_minimum_percentage,t2.component_concentration_minimum_percentage_sk,
+
+      CASE
+
+        WHEN t1.component_concentration_minimum_percentage = t2.component_concentration_minimum_percentage_sk Or
+
+         (t1.component_concentration_minimum_percentage  is  null  and t2.component_concentration_minimum_percentage_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_component_concentration_minimum_percentage,
+
+
+
+
+
+
+
+
+
+      FROM
+
+
+
+      `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9ac_socle_eu_pd.soc_socle_composition_architecture` AS t1 full join 
+
+     `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_composition_architecture`  AS t2
+
+    on
+
+      (t1.socle_id = t2.socle_id_sk) and (t1.component_raw_material_id =t2.component_raw_material_id_sk ) and 
+       (t1.socle_architecture_composition_id = t2.socle_architecture_composition_id_sk) 
+
+       where socle_architecture_composition_id = socle_architecture_composition_id_sk
+        
+        
+
+    ORDER BY
+
+     t1.socle_id;
+
+
+
+
+
+### the final result with nombre of ok for each column
+
+
+
+
+drop table if exists `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.result_test_sdds_socle_composition_architecture`;
+
+
+
+
+CREATE or replace table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.result_test_sdds_socle_composition_architecture` AS
+
+
+
+
+SELECT
+
+  'SOC - Composition architecture' AS business_object,
+
+  column_name,
+
+  COUNTIF(column_value = 'OK') AS ok_count,
+
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count
+
+FROM (
+
+  SELECT
+
+   
+   status_socle_id,
+
+   status_socle_source_id,
+
+   status_socle_code,
+
+   status_socle_architecture_composition_id,
+
+   status_socle_architecture_composition_source_id,
+
+   status_socle_version,
+
+   status_last_socle_version_flag,
+
+   status_last_socle_published_version_flag,
+
+   status_component_raw_material_id,
+
+   status_component_raw_material_source,
+
+  status_component_raw_material_code,
+
+  status_component_primary_raw_material_flag,
+
+  status_component_raw_material_category_code,
+
+  status_component_raw_material_category_name_en,
+    
+  status_component_raw_material_category_name_fr,
+
+  status_socle_architecture_logical_connectors,
+
+  status_component_concentration_minimum_percentage,
+
+  status_component_concentration_maximum_percentage
+
+  
+    
+
+
+
+
+  FROM
+
+    `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.comparaison_sdds_socle_composition_architecture`
+
+)
+
+UNPIVOT (column_value FOR column_name IN ( 
+
+   status_socle_id,
+
+   status_socle_source_id,
+
+   status_socle_code,
+
+   status_socle_architecture_composition_id,
+
+   status_socle_architecture_composition_source_id,
+
+   status_socle_version,
+
+   status_last_socle_version_flag,
+
+   status_last_socle_published_version_flag,
+
+   status_component_raw_material_id,
+
+   status_component_raw_material_source,
+
+  status_component_raw_material_code,
+
+  status_component_primary_raw_material_flag,
+
+  status_component_raw_material_category_code,
+
+  status_component_raw_material_category_name_en,
+    
+  status_component_raw_material_category_name_fr,
+
+  status_socle_architecture_logical_connectors,
+
+  status_component_concentration_minimum_percentage,
+
+  status_component_concentration_maximum_percentage
+
+
+))
+
+WHERE
+
+  column_value IN ('OK', 'DIFFERENT')
+
+GROUP BY
+
+  column_name;
+

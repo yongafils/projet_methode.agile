@@ -1,0 +1,513 @@
+CREATE or replace TABLE  `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_formula_regulatory_characteristics` AS 
+SELECT 
+      t1.formula_id,t2.formula_id_sk, 
+      CASE 
+        WHEN t1.formula_id = t2.formula_id_sk  Or  (t1.formula_id is null  AND t2.formula_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_id,
+
+      t1.formula_source_id ,t2.formula_source_id_sk,
+      CASE 
+        WHEN t1.formula_source_id = t2.formula_source_id_sk Or  (t1.formula_source_id is null  AND t2.formula_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_source_id,
+
+
+
+      t1.formula_code,t2.formula_code_sk,
+      CASE 
+        WHEN t1.formula_code = t2.formula_code_sk Or  (t1.formula_code is null  AND t2.formula_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_code ,
+
+
+
+      t1.final_product_clp_cmr_1a_1b_presence_flag , t2.final_product_clp_cmr_1a_1b_presence_flag_sk,
+      CASE 
+        WHEN t1.final_product_clp_cmr_1a_1b_presence_flag = t2.final_product_clp_cmr_1a_1b_presence_flag_sk  Or 
+         
+           (t1.final_product_clp_cmr_1a_1b_presence_flag is null  AND t2.final_product_clp_cmr_1a_1b_presence_flag_sk is null  ) THEN 'OK'
+      ELSE 'DIFFERENT'
+      END AS status_final_product_clp_cmr_1a_1b_presence_flag ,
+
+
+
+
+       t1.final_product_for_children_under_three_flag, t2.final_product_for_children_under_three_flag_sk,
+      CASE 
+        WHEN t1.final_product_for_children_under_three_flag = t2.final_product_for_children_under_three_flag_sk Or 
+        
+         (t1.final_product_for_children_under_three_flag  is null  AND t2.final_product_for_children_under_three_flag_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_final_product_for_children_under_three_flag,
+
+
+
+      t1.final_product_nanomaterial_presence_flag, t2.final_product_nanomaterial_presence_flag_sk,
+      CASE 
+        WHEN t1.final_product_nanomaterial_presence_flag = t2.final_product_nanomaterial_presence_flag_sk Or 
+        
+         (t1.final_product_nanomaterial_presence_flag  is null  AND t2.final_product_nanomaterial_presence_flag_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_final_product_nanomaterial_presence_flag,
+
+
+
+      
+      t1.final_product_information_nanomaterials_code , t2.final_product_information_nanomaterials_code_sk,
+      CASE 
+        WHEN t1.final_product_information_nanomaterials_code  = t2.final_product_information_nanomaterials_code_sk Or 
+        
+         (t1.final_product_information_nanomaterials_code  is null  AND t2.final_product_information_nanomaterials_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_final_product_information_nanomaterials_code,
+
+
+
+       t1.final_product_information_nanomaterials_name_en ,  t2.final_product_information_nanomaterials_name_en_sk,
+      CASE 
+        WHEN t1.final_product_information_nanomaterials_name_en = t2.final_product_information_nanomaterials_name_en_sk  Or 
+        
+         (t1.final_product_information_nanomaterials_name_en is null  AND t2.final_product_information_nanomaterials_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_final_product_information_nanomaterials_name_en,
+
+
+
+      
+       t1.final_product_information_nanomaterials_name_fr ,  t2.final_product_information_nanomaterials_name_fr_sk,
+      CASE 
+        WHEN t1.final_product_information_nanomaterials_name_fr = t2.final_product_information_nanomaterials_name_fr_sk  Or 
+        
+         (t1.final_product_information_nanomaterials_name_fr is null  AND t2.final_product_information_nanomaterials_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_final_product_information_nanomaterials_name_fr,
+
+
+      
+       t1.final_product_kit_component_function_code ,  t2.final_product_kit_component_function_code_sk,
+      CASE 
+        WHEN t1.final_product_kit_component_function_code = t2.final_product_kit_component_function_code_sk Or 
+        
+         (t1.final_product_kit_component_function_code is null  AND t2.final_product_kit_component_function_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_final_product_kit_component_function_code,
+
+
+      
+       t1.final_product_kit_component_function_name_en,  t2.final_product_kit_component_function_name_en_sk,
+      CASE 
+        WHEN t1.final_product_kit_component_function_name_en  = t2.final_product_kit_component_function_name_en_sk  Or 
+        
+         (t1.final_product_kit_component_function_name_en  is null  AND t2.final_product_kit_component_function_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_final_product_kit_component_function_name_en,
+
+
+
+            
+       t1.final_product_kit_component_function_name_fr,  t2.final_product_kit_component_function_name_fr_sk,
+      CASE 
+        WHEN t1.final_product_kit_component_function_name_fr = t2.final_product_kit_component_function_name_fr_sk  Or 
+        
+         (t1.final_product_kit_component_function_name_fr  is null  AND t2.final_product_kit_component_function_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_final_product_kit_component_function_name_fr,
+
+
+            
+       t1.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_en,  t2.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_en  = t2.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_en_sk Or 
+        
+         (t1.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_en  is null  AND t2.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_en,
+
+
+
+           
+       t1.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_fr,  t2.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_fr  = t2.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_fr_sk Or 
+        
+         (t1.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_fr  is null  AND t2.declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_alkaline_agents_ammonium_hydroxyde_liberators_name_fr,
+
+
+
+      
+       t1.declared_ingredients_antidandruff_agent_name_en,  t2.declared_ingredients_antidandruff_agent_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_antidandruff_agent_name_en  = t2.declared_ingredients_antidandruff_agent_name_en_sk Or 
+        
+         (t1.declared_ingredients_antidandruff_agent_name_en  is null  AND t2.declared_ingredients_antidandruff_agent_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_antidandruff_agent_name_en,
+
+
+
+
+            t1.declared_ingredients_antidandruff_agent_name_fr,  t2.declared_ingredients_antidandruff_agent_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_antidandruff_agent_name_fr  = t2.declared_ingredients_antidandruff_agent_name_fr_sk Or 
+        
+         (t1.declared_ingredients_antidandruff_agent_name_fr  is null  AND t2.declared_ingredients_antidandruff_agent_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_antidandruff_agent_name_fr,
+
+
+
+      
+            t1.declared_ingredients_anti_pigmentation_depigmenting_agents_name_en,  t2.declared_ingredients_anti_pigmentation_depigmenting_agents_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_anti_pigmentation_depigmenting_agents_name_en  = t2.declared_ingredients_anti_pigmentation_depigmenting_agents_name_en_sk Or 
+        
+         (t1.declared_ingredients_anti_pigmentation_depigmenting_agents_name_en  is null  AND t2.declared_ingredients_anti_pigmentation_depigmenting_agents_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_anti_pigmentation_depigmenting_agents_name_en,
+
+
+
+       t1.declared_ingredients_anti_pigmentation_depigmenting_agents_name_fr,  t2.declared_ingredients_anti_pigmentation_depigmenting_agents_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_anti_pigmentation_depigmenting_agents_name_fr  = t2.declared_ingredients_anti_pigmentation_depigmenting_agents_name_fr_sk Or 
+        
+         (t1.declared_ingredients_anti_pigmentation_depigmenting_agents_name_fr  is null  AND t2.declared_ingredients_anti_pigmentation_depigmenting_agents_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_anti_pigmentation_depigmenting_agents_name_fr,
+
+
+      
+       t1.declared_ingredients_cationic_surfactants_name_en,  t2.declared_ingredients_cationic_surfactants_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_cationic_surfactants_name_en  = t2.declared_ingredients_cationic_surfactants_name_en_sk Or 
+        
+         (t1.declared_ingredients_cationic_surfactants_name_en  is null  AND t2.declared_ingredients_cationic_surfactants_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_cationic_surfactants_name_en,
+      
+
+      
+      
+       t1.declared_ingredients_cationic_surfactants_name_fr,  t2.declared_ingredients_cationic_surfactants_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_cationic_surfactants_name_fr  = t2.declared_ingredients_cationic_surfactants_name_fr_sk Or 
+        
+         (t1.declared_ingredients_cationic_surfactants_name_fr  is null  AND t2.declared_ingredients_cationic_surfactants_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_cationic_surfactants_name_fr,
+
+
+
+      
+       t1.declared_ingredients_chemical_exfoliant_agents_name_en,  t2.declared_ingredients_chemical_exfoliant_agents_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_chemical_exfoliant_agents_name_en  = t2.declared_ingredients_chemical_exfoliant_agents_name_en_sk Or 
+        
+         (t1.declared_ingredients_chemical_exfoliant_agents_name_en  is null  AND t2.declared_ingredients_chemical_exfoliant_agents_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_chemical_exfoliant_agents_name_en,
+
+
+
+      t1.declared_ingredients_chemical_exfoliant_agents_name_fr,  t2.declared_ingredients_chemical_exfoliant_agents_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_chemical_exfoliant_agents_name_fr  = t2.declared_ingredients_chemical_exfoliant_agents_name_fr_sk Or 
+        
+         (t1.declared_ingredients_chemical_exfoliant_agents_name_fr  is null  AND t2.declared_ingredients_chemical_exfoliant_agents_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_chemical_exfoliant_agents_name_fr,
+
+
+
+      
+      t1.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_concentration,  t2.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_concentration_sk,
+      CASE 
+        WHEN t1.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_concentration  = t2.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_concentration_sk  Or 
+        
+         (t1.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_concentration is null  AND t2.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_concentration_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_essential_oils_camphor_menthol_eucalyptol_concentration,
+      
+
+
+           
+      t1.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_en,  t2.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_en = t2.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_en_sk  Or 
+        
+         (t1.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_en is null  AND t2.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_en,
+
+
+
+         
+      t1.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_fr,  t2.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_fr = t2.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_fr_sk  Or 
+        
+         (t1.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_fr is null  AND t2.declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_essential_oils_camphor_menthol_eucalyptol_name_fr,
+
+
+
+
+          
+      t1.declared_ingredients_ethanol_concentration ,  t2.declared_ingredients_ethanol_concentration_sk,
+      CASE 
+        WHEN t1.declared_ingredients_ethanol_concentration = t2.declared_ingredients_ethanol_concentration_sk  Or 
+        
+         (t1.declared_ingredients_ethanol_concentration  is null  AND t2.declared_ingredients_ethanol_concentration_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_ethanol_concentration,
+
+
+
+
+          
+      t1.declared_ingredients_glycols_glycol_ethers_name_en ,  t2.declared_ingredients_glycols_glycol_ethers_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_glycols_glycol_ethers_name_en = t2.declared_ingredients_glycols_glycol_ethers_name_en_sk Or 
+        
+         (t1.declared_ingredients_glycols_glycol_ethers_name_en   is null  AND t2.declared_ingredients_glycols_glycol_ethers_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_glycols_glycol_ethers_name_en,
+
+
+
+             
+      t1.declared_ingredients_glycols_glycol_ethers_name_fr ,  t2.declared_ingredients_glycols_glycol_ethers_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_glycols_glycol_ethers_name_fr = t2.declared_ingredients_glycols_glycol_ethers_name_fr_sk Or 
+        
+         (t1.declared_ingredients_glycols_glycol_ethers_name_fr   is null  AND t2.declared_ingredients_glycols_glycol_ethers_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_glycols_glycol_ethers_name_fr,
+
+
+
+         t1.declared_ingredients_hydrocarbon_solvents_name_en ,  t2.declared_ingredients_hydrocarbon_solvents_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_hydrocarbon_solvents_name_en = t2.declared_ingredients_hydrocarbon_solvents_name_en_sk Or 
+        
+         (t1.declared_ingredients_hydrocarbon_solvents_name_en   is null  AND t2.declared_ingredients_hydrocarbon_solvents_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_hydrocarbon_solvents_name_en,
+
+
+
+      
+         t1.declared_ingredients_hydrocarbon_solvents_name_fr ,  t2.declared_ingredients_hydrocarbon_solvents_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_hydrocarbon_solvents_name_fr = t2.declared_ingredients_hydrocarbon_solvents_name_fr_sk Or 
+        
+         (t1.declared_ingredients_hydrocarbon_solvents_name_fr   is null  AND t2.declared_ingredients_hydrocarbon_solvents_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_hydrocarbon_solvents_name_fr,
+
+
+
+       
+         t1.declared_ingredients_hydrogen_peroxyde_concentration ,  t2.declared_ingredients_hydrogen_peroxyde_concentration_sk,
+      CASE 
+        WHEN t1.declared_ingredients_hydrogen_peroxyde_concentration = t2.declared_ingredients_hydrogen_peroxyde_concentration_sk Or 
+        
+         (t1.declared_ingredients_hydrogen_peroxyde_concentration   is null  AND t2.declared_ingredients_hydrogen_peroxyde_concentration_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_hydrogen_peroxyde_concentration,
+
+
+
+
+      
+         t1.declared_ingredients_isopropanol_concentration,  t2.declared_ingredients_isopropanol_concentration_sk,
+      CASE 
+        WHEN t1.declared_ingredients_isopropanol_concentration = t2.declared_ingredients_isopropanol_concentration_sk Or 
+        
+         (t1.declared_ingredients_isopropanol_concentration   is null  AND t2.declared_ingredients_isopropanol_concentration_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_isopropanol_concentration,
+
+
+
+       t1.declared_ingredients_alcohol_other_types_name_en,  t2.declared_ingredients_alcohol_other_types_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_alcohol_other_types_name_en = t2.declared_ingredients_alcohol_other_types_name_en_sk Or 
+        
+         (t1.declared_ingredients_alcohol_other_types_name_en   is null  AND t2.declared_ingredients_alcohol_other_types_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_alcohol_other_types_name_en,
+
+
+
+          t1.declared_ingredients_alcohol_other_types_name_fr ,t2.declared_ingredients_alcohol_other_types_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_alcohol_other_types_name_fr = t2.declared_ingredients_alcohol_other_types_name_fr_sk Or 
+        
+         (t1.declared_ingredients_alcohol_other_types_name_fr   is null  AND t2.declared_ingredients_alcohol_other_types_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_alcohol_other_types_name_fr,
+
+
+
+      
+
+          t1.declared_ingredients_persulphates_name_en ,t2.declared_ingredients_persulphates_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_persulphates_name_en = t2.declared_ingredients_persulphates_name_en_sk Or 
+        
+         (t1.declared_ingredients_persulphates_name_en  is null  AND t2.declared_ingredients_persulphates_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_persulphates_name_en,
+
+
+      
+          t1.declared_ingredients_persulphates_name_fr ,t2.declared_ingredients_persulphates_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_persulphates_name_fr = t2.declared_ingredients_persulphates_name_fr_sk Or 
+        
+         (t1.declared_ingredients_persulphates_name_fr  is null  AND t2.declared_ingredients_persulphates_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_persulphates_name_fr,
+
+
+
+       t1.declared_ingredients_propellants_name_en ,t2.declared_ingredients_propellants_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_propellants_name_en = t2.declared_ingredients_propellants_name_en_sk Or 
+        
+         (t1.declared_ingredients_propellants_name_en  is null  AND t2.declared_ingredients_propellants_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_propellants_name_en,
+
+
+
+       t1.declared_ingredients_propellants_name_fr ,t2.declared_ingredients_propellants_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_propellants_name_fr = t2.declared_ingredients_propellants_name_fr_sk Or 
+        
+         (t1.declared_ingredients_propellants_name_fr  is null  AND t2.declared_ingredients_propellants_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_propellants_name_fr,
+
+
+
+         t1.declared_ingredients_reducing_agents_name_en  ,t2.declared_ingredients_reducing_agents_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_reducing_agents_name_en  = t2.declared_ingredients_reducing_agents_name_en_sk Or 
+        
+         (t1.declared_ingredients_reducing_agents_name_en   is null  AND t2.declared_ingredients_reducing_agents_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_reducing_agents_name_en,
+      
+
+      
+         t1.declared_ingredients_reducing_agents_name_fr  ,t2.declared_ingredients_reducing_agents_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_reducing_agents_name_fr  = t2.declared_ingredients_reducing_agents_name_fr_sk Or 
+        
+         (t1.declared_ingredients_reducing_agents_name_fr   is null  AND t2.declared_ingredients_reducing_agents_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_reducing_agents_name_fr,
+
+
+
+      
+         t1.declared_ingredients_vitamin_a_derivatives_concentration  ,t2.declared_ingredients_vitamin_a_derivatives_concentration_sk,
+      CASE 
+        WHEN t1.declared_ingredients_vitamin_a_derivatives_concentration = t2.declared_ingredients_vitamin_a_derivatives_concentration_sk Or 
+        
+         (t1.declared_ingredients_vitamin_a_derivatives_concentration  is null  AND t2.declared_ingredients_vitamin_a_derivatives_concentration_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_vitamin_a_derivatives_concentration ,
+
+
+      
+         t1.declared_ingredients_xanthine_derivatives_name_en  ,t2.declared_ingredients_xanthine_derivatives_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_xanthine_derivatives_name_en  = t2.declared_ingredients_xanthine_derivatives_name_en_sk Or 
+        
+         (t1.declared_ingredients_xanthine_derivatives_name_en is null  AND t2.declared_ingredients_xanthine_derivatives_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_xanthine_derivatives_name_en,
+
+
+
+      
+      
+         t1.declared_ingredients_xanthine_derivatives_name_fr  ,t2.declared_ingredients_xanthine_derivatives_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_xanthine_derivatives_name_fr  = t2.declared_ingredients_xanthine_derivatives_name_fr_sk Or 
+        
+         (t1.declared_ingredients_xanthine_derivatives_name_fr is null  AND t2.declared_ingredients_xanthine_derivatives_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_xanthine_derivatives_name_fr,
+
+
+
+            
+         t1.declared_ingredients_hair_straightening_agents_name_en ,t2.declared_ingredients_hair_straightening_agents_name_en_sk,
+      CASE 
+        WHEN t1.declared_ingredients_hair_straightening_agents_name_en  = t2.declared_ingredients_hair_straightening_agents_name_en_sk Or 
+        
+         (t1.declared_ingredients_hair_straightening_agents_name_en is null  AND t2.declared_ingredients_hair_straightening_agents_name_en_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_hair_straightening_agents_name_en,
+
+
+
+          
+         t1.declared_ingredients_hair_straightening_agents_name_fr ,t2.declared_ingredients_hair_straightening_agents_name_fr_sk,
+      CASE 
+        WHEN t1.declared_ingredients_hair_straightening_agents_name_fr  = t2.declared_ingredients_hair_straightening_agents_name_fr_sk Or 
+        
+         (t1.declared_ingredients_hair_straightening_agents_name_fr is null  AND t2.declared_ingredients_hair_straightening_agents_name_fr_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_declared_ingredients_hair_straightening_agents_name_fr,
+      
+
+
+               
+         t1.period_after_opening_code , t2.period_after_opening_code_sk,
+      CASE 
+        WHEN t1.period_after_opening_code  = t2.period_after_opening_code_sk Or 
+        
+         (t1.period_after_opening_code is null  AND t2.period_after_opening_code_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_period_after_opening_code,
+
+
+
+          t1.period_after_opening_name_en ,t2.period_after_opening_name_en_sk,
+      CASE 
+        WHEN t1.period_after_opening_name_en = t2.period_after_opening_name_en_sk Or 
+        
+         (t1.period_after_opening_name_en is null  AND t2.period_after_opening_name_en_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_period_after_opening_name_en,
+
+
+
+
+        t1.period_after_opening_name_fr ,t2.period_after_opening_name_fr_sk,
+      CASE 
+        WHEN t1.period_after_opening_name_fr = t2.period_after_opening_name_fr_sk Or 
+        
+         (t1.period_after_opening_name_fr is null  AND t2.period_after_opening_name_fr_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_period_after_opening_name_fr,
+
+
+
+FROM 
+      `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9aa_md_formula_general_information_eu_pd.fgi_formula_regulatory_characteristics` AS t1 full join
+
+      `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_regulatory_characteristics` AS t2
+     
+      ON t1.formula_id = t2.formula_id_sk
+    ORDER BY 
+     t1.formula_id;

@@ -1,0 +1,778 @@
+/********************************************/
+
+/********* BUSINESS VALIDATION TEST *********/
+
+/* SDDS-SF :FGI        ***************/
+
+/* Table-BO : FAB - Batch Fabrication - General Characteristics  **********/
+
+/* Requestor : ******************************/
+
+/* Author : YONGA Fils Jacques     ******************************/
+
+/* Creation date : 17/08/2023  *************************/
+
+/* Comment :   ******************************/
+
+/* Update date :  ***************************/
+
+/* Details of the update :  21/08/2023*****************/
+
+
+
+/* CREATE VIEW*/
+CREATE OR REPLACE  VIEW  `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.view_sdds_md_fab_batch_fabrication_general_characteristics` as
+ 
+ SELECT
+ DISTINCT
+ id_fab_fabrication
+ from rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_fabrication_eu_pd.tbl_dim_fabrication;
+
+
+
+
+                                
+# Create View for  Image (respecting the rules in specification file)
+CREATE OR REPLACE TABLE   rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fab_batch_fabrication_general_characteristics AS 
+
+SELECT
+
+DISTINCT
+
+a.id_fab_fabrication as fabrication_id_sk,
+
+a.key_fab_fabrication as fabrication_source_id_sk,
+
+a.cod_fabrication as  fabrication_code_sk,
+
+a.lab_fabrication as  fabrication_title_sk,
+
+
+a.lab_external_fabrication as original_batch_number_sk,
+
+a.id_fle_formula as  formula_id_sk,
+
+a.key_fle_formula as  formula_source_id_sk,
+
+b.cod_formula as formula_code_sk,
+
+a.fabrication_date as  fabrication_date_sk,
+
+a.creation_date as fabrication_creation_date_sk,
+
+a.key_mdm_user as  fabrication_creator_source_id_sk,
+
+a.cod_user_creation as fabrication_creator_code_sk,
+
+a.first_name_user_creation as  fabrication_creator_first_name_sk,
+
+
+a.last_name_user_creation as fabrication_creator_last_name_sk,
+
+a.key_mdm_entity as  fabrication_laboratory_source_id_sk,
+
+a.cod_entity as  fabrication_laboratory_code_sk,
+
+
+
+
+
+a.nam_entity_name_en as fabrication_laboratory_name_en_sk,
+
+a.nam_entity_name_fr as fabrication_laboratory_name_fr_sk,
+
+a.fabricated_mass as batch_target_mass_g_sk,
+
+a.key_fab_status as fabrication_status_source_id_sk,
+
+a.cod_fab_fabrication_status as fabrication_status_code_sk,
+
+a.lab_fab_fabrication_status_en as fabrication_status_name_en_sk,
+
+a.lab_fab_fabrication_status_fr as  fabrication_status_name_fr_sk,
+
+a.key_fab_control_decision as controls_24_hours_control_decision_source_id_sk,
+
+a.cod_fab_fabrication_control_decision as controls_24_hours_control_decision_code_sk,
+
+a.lab_fab_fabrication_control_decision_en as controls_24_hours_control_decision_name_en_sk,
+
+a.lab_fab_fabrication_control_decision_fr as  controls_24_hours_control_decision_name_fr_sk,
+
+
+
+
+a.key_fab_derogation as  fabrication_exemption_source_id_sk,
+
+a.fab_derogation_type as fabrication_exemption_code_sk,
+
+a.lab_fab_derogation_motif_en as  fabrication_exemption_name_en_sk,
+
+a.lab_fab_derogation_motif_fr as fabrication_exemption_name_fr_sk,
+
+a.key_fab_creation_type as  fabrication_creation_type_source_id_sk,
+
+
+
+
+a.cod_fab_fabrication_creation_type as fabrication_creation_type_code_sk,
+
+a.lab_fab_fabrication_creation_type_en as fabrication_creation_type_name_en_sk,
+
+a.lab_fab_fabrication_creation_type_fr as fabrication_creation_type_name_fr_sk,
+
+a.key_fab_source as  fabrication_source_source_id_sk,
+
+
+a.cod_fab_fabrication_source as fabrication_source_code_sk,
+
+a.lab_fab_fabrication_source_en as  fabrication_source_name_en_sk,
+
+a.lab_fab_fabrication_source_fr as fabrication_source_name_fr_sk,
+
+
+
+a.lab_comment as fabrication_source_comment_sk,
+
+c.key_fab_weighing_step as fabrication_step_source_id_sk,
+
+c.cod_fab_fabrication_weighing_step as fabrication_step_code_sk,
+
+c.lab_fab_fabrication_weighing_step_en as fabrication_step_name_en_sk,
+
+c.lab_fab_fabrication_weighing_step_fr as fabrication_step_name_fr_sk,
+
+
+
+c.fabrication_objective as fabrication_objective_sk,
+
+c.operating_process as fabrication_operating_mode_sk,
+
+c.fabrication_observation as fabrication_observations_sk,
+
+c.fabrication_designation as fabrication_designation_sk,
+
+c.weighed_temperature as  weighed_temperature_sk
+
+
+ 
+FROM rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.view_sdds_md_fab_batch_fabrication_general_characteristics as d
+
+ left join rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_fabrication_eu_pd.tbl_dim_fabrication as a  on d.id_fab_fabrication = a.id_fab_fabrication
+
+
+
+LEFT  JOIN rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula as  b  on  b.id_formula = a.id_fle_formula  
+
+LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_fabrication_eu_pd.tbl_dim_fabrication_laboratory as c on d.id_fab_fabrication =c.id_fab_fabrication and c.id_fab_fabrication!="#NA"
+  
+  where b.id_formula is not null  and a.id_fle_formula is not null;
+ 
+    
+
+  
+ 
+ 
+     
+
+
+
+
+
+
+
+# exhaustive result (comparaison between each 2 columns in the tables and its status ok/ko)
+CREATE OR REPLACE TABLE  `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fab_batch_fabrication_general_characteristics` AS 
+SELECT 
+      t1.fabrication_id,t2.fabrication_id_sk, 
+      CASE 
+        WHEN t1.fabrication_id = t2.fabrication_id_sk  Or  (t1.fabrication_id is null  AND t2.fabrication_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_id,
+    
+      t1.fabrication_source_id,t2.fabrication_source_id_sk,
+      CASE 
+        WHEN t1.fabrication_source_id = t2.fabrication_source_id_sk Or  (t1.fabrication_source_id is null  AND t2.fabrication_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_source_id,
+
+      t1.fabrication_code,t2.fabrication_code_sk,
+      CASE 
+        WHEN t1.fabrication_code = t2.fabrication_code_sk Or  (t1.fabrication_code is null  AND t2.fabrication_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_code ,
+
+         t1.fabrication_title,t2.fabrication_title_sk,
+      CASE 
+        WHEN t1.fabrication_title = t2.fabrication_title_sk Or  (t1.fabrication_title  is null  AND t2.fabrication_title_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_title ,
+
+
+       t1.original_batch_number,t2.original_batch_number_sk, 
+      CASE 
+        WHEN t1.original_batch_number = t2.original_batch_number_sk  Or  (t1.original_batch_number is null  AND t2.original_batch_number_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_original_batch_number,
+
+
+      t1.formula_id,t2.formula_id_sk,
+      CASE 
+        WHEN t1.formula_id = t2.formula_id_sk  
+        
+        Or  (t1.formula_id is null  AND t2.formula_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_id,
+
+      t1.formula_source_id , t2.formula_source_id_sk,
+        CASE 
+        WHEN t1.formula_source_id = t2.formula_source_id_sk   Or  (t1.formula_source_id is null  AND t2.formula_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_source_id, 
+
+      t1.formula_code , t2.formula_code_sk,
+      CASE 
+        WHEN t1.formula_code = t2.formula_code_sk  Or  (t1.formula_code is null  AND t2.formula_code_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_code, 
+
+      t1.fabrication_date, t2.fabrication_date_sk,
+         CASE 
+        WHEN t1.fabrication_date = t2.fabrication_date_sk  Or  (t1.fabrication_date is null  AND t2.fabrication_date_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_date, 
+
+     t1.fabrication_creation_date, t2.fabrication_creation_date_sk,
+      CASE 
+        WHEN t1.fabrication_creation_date = t2.fabrication_creation_date_sk 
+        
+        Or  (t1.fabrication_creation_date is null  AND t2.fabrication_creation_date_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_creation_date, 
+
+
+     t1.fabrication_creator_source_id , t2.fabrication_creator_source_id_sk,
+      CASE 
+        WHEN t1.fabrication_creator_source_id = t2.fabrication_creator_source_id_sk
+        
+        Or  (t1.fabrication_creator_source_id is null  AND t2.fabrication_creator_source_id_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_creator_source_id, 
+
+
+
+
+      
+       t1.fabrication_creator_code , t2.fabrication_creator_code_sk,
+      CASE 
+        WHEN t1.fabrication_creator_code = t2.fabrication_creator_code_sk
+        
+        Or  (t1.fabrication_creator_code  is null  AND t2.fabrication_creator_code_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_creator_code, 
+
+
+         t1.fabrication_creator_first_name , t2.fabrication_creator_first_name_sk,
+      CASE 
+        WHEN t1.fabrication_creator_first_name= t2.fabrication_creator_first_name_sk
+        
+        Or  (t1.fabrication_creator_first_name  is null  AND t2.fabrication_creator_first_name_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_creator_first_name, 
+
+
+        t1.fabrication_creator_last_name, t2.fabrication_creator_last_name_sk,
+      CASE 
+        WHEN t1.fabrication_creator_last_name = t2.fabrication_creator_last_name_sk
+        
+        Or  (t1.fabrication_creator_last_name  is null  AND t2.fabrication_creator_last_name_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_creator_last_name, 
+
+
+
+      t1.fabrication_laboratory_source_id, t2.fabrication_laboratory_source_id_sk,
+      CASE 
+        WHEN t1.fabrication_laboratory_source_id = t2.fabrication_laboratory_source_id_sk
+        
+        Or  (t1.fabrication_laboratory_source_id  is null  AND t2.fabrication_laboratory_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_laboratory_source_id, 
+
+
+      
+      t1.fabrication_laboratory_code, t2.fabrication_laboratory_code_sk,
+      CASE 
+        WHEN t1.fabrication_laboratory_code = t2.fabrication_laboratory_code_sk
+        
+        Or  (t1.fabrication_laboratory_code is null  AND t2.fabrication_laboratory_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_laboratory_code, 
+
+
+         
+      t1.fabrication_laboratory_name_en, t2.fabrication_laboratory_name_en_sk,
+      CASE 
+        WHEN t1.fabrication_laboratory_name_en  = t2.fabrication_laboratory_name_en_sk
+        
+        Or  (t1.fabrication_laboratory_name_en is null  AND t2.fabrication_laboratory_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_laboratory_name_en, 
+
+
+
+      t1.fabrication_laboratory_name_fr, t2.fabrication_laboratory_name_fr_sk,
+      CASE 
+        WHEN t1.fabrication_laboratory_name_fr  = t2.fabrication_laboratory_name_fr_sk
+        
+        Or  (t1.fabrication_laboratory_name_fr is null  AND t2.fabrication_laboratory_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_laboratory_name_fr, 
+
+
+      
+      t1.batch_target_mass_g, t2.batch_target_mass_g_sk,
+      CASE 
+        WHEN t1.batch_target_mass_g  = t2.batch_target_mass_g_sk
+        
+        Or  (t1.batch_target_mass_g is null  AND t2.batch_target_mass_g_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_batch_target_mass_g, 
+
+
+      
+      t1.fabrication_status_source_id, t2.fabrication_status_source_id_sk,
+      CASE 
+        WHEN t1.fabrication_status_source_id = t2.fabrication_status_source_id_sk
+        
+        Or  (t1.fabrication_status_source_id is null  AND t2.fabrication_status_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_status_source_id, 
+
+
+      t1.fabrication_status_code, t2.fabrication_status_code_sk,
+      CASE 
+        WHEN t1.fabrication_status_code = t2.fabrication_status_code_sk
+        
+        Or  (t1.fabrication_status_code is null  AND t2.fabrication_status_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_status_code, 
+
+
+      
+      t1.fabrication_status_name_en, t2.fabrication_status_name_en_sk,
+      CASE 
+        WHEN t1.fabrication_status_name_en = t2.fabrication_status_name_en_sk
+        
+        Or  (t1.fabrication_status_name_en is null  AND t2.fabrication_status_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_status_name_en, 
+
+
+      
+      t1.fabrication_status_name_fr, t2.fabrication_status_name_fr_sk,
+      CASE 
+        WHEN t1.fabrication_status_name_fr = t2.fabrication_status_name_fr_sk
+        
+        Or  (t1.fabrication_status_name_fr is null  AND t2.fabrication_status_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_status_name_fr, 
+
+
+       t1.controls_24_hours_control_decision_source_id, t2.controls_24_hours_control_decision_source_id_sk,
+      CASE 
+        WHEN t1.controls_24_hours_control_decision_source_id = t2.controls_24_hours_control_decision_source_id_sk
+        
+        Or  (t1.controls_24_hours_control_decision_source_id is null  AND t2.controls_24_hours_control_decision_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_controls_24_hours_control_decision_source_id, 
+
+
+
+       t1.controls_24_hours_control_decision_code, t2.controls_24_hours_control_decision_code_sk,
+      CASE 
+        WHEN t1.controls_24_hours_control_decision_code = t2.controls_24_hours_control_decision_code_sk
+        
+        Or  (t1.controls_24_hours_control_decision_code  is null  AND t2.controls_24_hours_control_decision_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_controls_24_hours_control_decision_code, 
+
+
+       t1.controls_24_hours_control_decision_name_en, t2.controls_24_hours_control_decision_name_en_sk,
+      CASE 
+        WHEN t1.controls_24_hours_control_decision_name_en = t2.controls_24_hours_control_decision_name_en_sk
+        
+        Or  (t1.controls_24_hours_control_decision_name_en  is null  AND t2.controls_24_hours_control_decision_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_controls_24_hours_control_decision_name_en,
+
+
+       t1.controls_24_hours_control_decision_name_fr, t2.controls_24_hours_control_decision_name_fr_sk,
+      CASE 
+        WHEN t1.controls_24_hours_control_decision_name_fr = t2.controls_24_hours_control_decision_name_fr_sk
+        
+        Or  (t1.controls_24_hours_control_decision_name_fr  is null  AND t2.controls_24_hours_control_decision_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_controls_24_hours_control_decision_name_fr, 
+
+
+
+       t1.fabrication_exemption_source_id, t2.fabrication_exemption_source_id_sk,
+      CASE 
+        WHEN t1.fabrication_exemption_source_id = t2.fabrication_exemption_source_id_sk
+        
+        Or  (t1.fabrication_exemption_source_id  is null  AND t2.fabrication_exemption_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_exemption_source_id,
+
+
+
+        t1.fabrication_exemption_code, t2.fabrication_exemption_code_sk,
+      CASE 
+        WHEN t1.fabrication_exemption_code = t2.fabrication_exemption_code_sk
+        
+        Or  (t1.fabrication_exemption_code  is null  AND t2.fabrication_exemption_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_exemption_code,  
+
+
+
+         t1.fabrication_exemption_name_en, t2.fabrication_exemption_name_en_sk,
+      CASE 
+        WHEN t1.fabrication_exemption_name_en = t2.fabrication_exemption_name_en_sk
+        
+        Or  (t1.fabrication_exemption_name_en  is null  AND t2.fabrication_exemption_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_exemption_name_en, 
+
+
+       t1.fabrication_exemption_name_fr, t2.fabrication_exemption_name_fr_sk,
+      CASE 
+        WHEN t1.fabrication_exemption_name_fr = t2.fabrication_exemption_name_fr_sk
+        
+        Or  (t1.fabrication_exemption_name_fr is null  AND t2.fabrication_exemption_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_exemption_name_fr, 
+
+
+
+      t1.fabrication_creation_type_code, t2.fabrication_creation_type_code_sk,
+      CASE 
+        WHEN t1.fabrication_creation_type_code = t2.fabrication_creation_type_code_sk
+        
+        Or  (t1.fabrication_creation_type_code is null  AND t2.fabrication_creation_type_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_creation_type_code, 
+
+
+
+      t1.fabrication_creation_type_name_en, t2.fabrication_creation_type_name_en_sk,
+      CASE 
+        WHEN t1.fabrication_creation_type_name_en = t2.fabrication_creation_type_name_en_sk
+        
+        Or  (t1.fabrication_creation_type_name_en is null  AND t2.fabrication_creation_type_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_creation_type_name_en,  
+
+
+
+      
+      t1.fabrication_creation_type_name_fr, t2.fabrication_creation_type_name_fr_sk,
+      CASE 
+        WHEN t1.fabrication_creation_type_name_fr = t2.fabrication_creation_type_name_fr_sk
+        
+        Or  (t1.fabrication_creation_type_name_fr is null  AND t2.fabrication_creation_type_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_creation_type_name_fr,  
+
+
+
+      
+      t1.fabrication_source_source_id, t2.fabrication_source_source_id_sk,
+      CASE 
+        WHEN t1.fabrication_source_source_id = t2.fabrication_source_source_id_sk
+        
+        Or  (t1.fabrication_source_source_id is null  AND t2.fabrication_source_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_source_source_id, 
+
+
+      
+      t1.fabrication_source_code, t2.fabrication_source_code_sk,
+      CASE 
+        WHEN t1.fabrication_source_code = t2.fabrication_source_code_sk
+        
+        Or  (t1.fabrication_source_code is null  AND t2.fabrication_source_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_source_code, 
+
+
+      
+      t1.fabrication_source_name_en, t2.fabrication_source_name_en_sk,
+      CASE 
+        WHEN t1.fabrication_source_name_en = t2.fabrication_source_name_en_sk
+        
+        Or  (t1.fabrication_source_name_en  is null  AND t2.fabrication_source_name_en_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_source_name_en,  
+
+
+
+       t1.fabrication_source_name_fr, t2.fabrication_source_name_fr_sk,
+      CASE 
+        WHEN t1.fabrication_source_name_fr = t2.fabrication_source_name_fr_sk
+        
+        Or  (t1.fabrication_source_name_fr  is null  AND t2.fabrication_source_name_fr_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_source_name_fr,  
+
+
+
+         t1.fabrication_source_comment, t2.fabrication_source_comment_sk,
+      CASE 
+        WHEN t1.fabrication_source_comment = t2.fabrication_source_comment_sk
+        
+        Or  (t1.fabrication_source_comment  is null  AND t2.fabrication_source_comment_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_source_comment, 
+
+
+      
+         t1.fabrication_step_source_id, t2.fabrication_step_source_id_sk,
+      CASE 
+        WHEN t1.fabrication_step_source_id = t2.fabrication_step_source_id_sk
+        
+        Or  (t1.fabrication_step_source_id  is null  AND t2.fabrication_step_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_step_source_id,
+
+
+       t1.fabrication_step_code, t2.fabrication_step_code_sk,
+      CASE 
+        WHEN t1.fabrication_step_code = t2.fabrication_step_code_sk
+        
+        Or  (t1.fabrication_step_code is null  AND t2.fabrication_step_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_step_code,
+
+
+
+      
+       t1.fabrication_step_name_en, t2.fabrication_step_name_en_sk,
+      CASE 
+        WHEN t1.fabrication_step_name_en  = t2.fabrication_step_name_en_sk
+        
+        Or  (t1.fabrication_step_name_en  is null  AND t2.fabrication_step_name_en_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_step_name_en,  
+
+
+
+
+      t1.fabrication_step_name_fr, t2.fabrication_step_name_fr_sk,
+      CASE 
+        WHEN t1.fabrication_step_name_fr  = t2.fabrication_step_name_fr_sk
+        
+        Or  (t1.fabrication_step_name_fr  is null  AND t2.fabrication_step_name_fr_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_step_name_fr,
+
+
+      
+      t1.fabrication_objective, t2.fabrication_objective_sk,
+      CASE 
+        WHEN t1.fabrication_objective  = t2.fabrication_objective_sk
+        
+        Or  (t1.fabrication_objective is null  AND t2.fabrication_objective_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_objective,                       
+       
+
+
+       
+      t1.fabrication_operating_mode, t2.fabrication_operating_mode_sk,
+      CASE 
+        WHEN t1.fabrication_operating_mode  = t2.fabrication_operating_mode_sk
+        
+        Or  (t1.fabrication_operating_mode is null  AND t2.fabrication_operating_mode_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_operating_mode, 
+
+
+      
+      t1.fabrication_observations, t2.fabrication_observations_sk,
+      CASE 
+        WHEN t1.fabrication_observations  = t2.fabrication_observations_sk
+        
+        Or  (t1.fabrication_observations is null  AND t2.fabrication_observations_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_observations, 
+
+
+
+       t1.fabrication_designation, t2.fabrication_designation_sk,
+      CASE 
+        WHEN t1.fabrication_designation  = t2.fabrication_designation_sk
+        
+        Or  (t1.fabrication_designation is null  AND t2.fabrication_designation_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_designation,   
+
+
+
+      t1.weighed_temperature, t2.weighed_temperature_sk,
+      CASE 
+        WHEN t1.weighed_temperature  = t2.weighed_temperature_sk
+        
+        Or  (t1.weighed_temperature is null  AND t2.weighed_temperature_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_weighed_temperature,  
+
+
+      t1.fabrication_creation_type_source_id, t2.fabrication_creation_type_source_id_sk,
+      CASE 
+        WHEN t1.fabrication_creation_type_source_id  = t2.fabrication_creation_type_source_id_sk
+        
+        Or  (t1.fabrication_creation_type_source_id is null  AND t2.fabrication_creation_type_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fabrication_creation_type_source_id,       
+            
+       
+   
+
+
+
+
+
+ 
+    FROM 
+      `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9aa_md_formula_general_information_eu_pd.fab_batch_fabrication_general_characteristics` AS t1 full outer join 
+      `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fab_batch_fabrication_general_characteristics` AS t2
+    ON 
+      t1.formula_id = t2.formula_id_sk and t1.fabrication_id = t2.fabrication_id_sk
+    ORDER BY 
+     t1.formula_id;
+
+### the final result with nombre of ok for each column 
+CREATE OR REPLACE TABLE `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.result_sdds_md_fab_batch_fabrication_general_characteristics` AS
+SELECT 
+  'fab_batch_fabrication_general_characteristics' AS business_object,
+  column_name, 
+  COUNTIF(column_value = 'OK') AS ok_count, 
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count 
+FROM (
+  SELECT 
+
+status_fabrication_id,
+status_fabrication_source_id,
+status_fabrication_code,
+status_fabrication_title,
+status_original_batch_number,
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_fabrication_date,
+status_fabrication_creation_date,
+status_fabrication_creator_source_id,
+status_fabrication_creator_code,
+status_fabrication_creator_first_name,
+status_fabrication_creator_last_name,
+status_fabrication_laboratory_source_id,
+status_fabrication_laboratory_code,
+status_fabrication_laboratory_name_en,
+status_fabrication_laboratory_name_fr,
+status_batch_target_mass_g,
+status_fabrication_status_source_id,
+status_fabrication_status_code,
+status_fabrication_status_name_en,
+status_fabrication_status_name_fr,
+status_controls_24_hours_control_decision_source_id,
+status_controls_24_hours_control_decision_code,
+status_controls_24_hours_control_decision_name_en,
+status_controls_24_hours_control_decision_name_fr,
+status_fabrication_exemption_source_id,
+status_fabrication_exemption_code,
+status_fabrication_exemption_name_en,
+status_fabrication_exemption_name_fr,
+status_fabrication_creation_type_source_id,
+status_fabrication_creation_type_code,
+status_fabrication_creation_type_name_en,
+status_fabrication_creation_type_name_fr,
+status_fabrication_source_source_id,
+status_fabrication_source_code,
+status_fabrication_source_name_en,
+status_fabrication_source_name_fr,
+status_fabrication_source_comment,
+status_fabrication_step_source_id,
+status_fabrication_step_code,
+status_fabrication_step_name_en,
+status_fabrication_step_name_fr,
+status_fabrication_objective,
+status_fabrication_operating_mode,
+status_fabrication_observations,
+status_fabrication_designation,
+status_weighed_temperature
+
+
+
+  FROM 
+    rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fab_batch_fabrication_general_characteristics
+)
+UNPIVOT (column_value FOR column_name IN 
+(   
+
+status_fabrication_id,
+status_fabrication_source_id,
+status_fabrication_code,
+status_fabrication_title,
+status_original_batch_number,
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_fabrication_date,
+status_fabrication_creation_date,
+status_fabrication_creator_source_id,
+status_fabrication_creator_code,
+status_fabrication_creator_first_name,
+status_fabrication_creator_last_name,
+status_fabrication_laboratory_source_id,
+status_fabrication_laboratory_code,
+status_fabrication_laboratory_name_en,
+status_fabrication_laboratory_name_fr,
+status_batch_target_mass_g,
+status_fabrication_status_source_id,
+status_fabrication_status_code,
+status_fabrication_status_name_en,
+status_fabrication_status_name_fr,
+status_controls_24_hours_control_decision_source_id,
+status_controls_24_hours_control_decision_code,
+status_controls_24_hours_control_decision_name_en,
+status_controls_24_hours_control_decision_name_fr,
+status_fabrication_exemption_source_id,
+status_fabrication_exemption_code,
+status_fabrication_exemption_name_en,
+status_fabrication_exemption_name_fr,
+status_fabrication_creation_type_source_id,
+status_fabrication_creation_type_code,
+status_fabrication_creation_type_name_en,
+status_fabrication_creation_type_name_fr,
+status_fabrication_source_source_id,
+status_fabrication_source_code,
+status_fabrication_source_name_en,
+status_fabrication_source_name_fr,
+status_fabrication_source_comment,
+status_fabrication_step_source_id,
+status_fabrication_step_code,
+status_fabrication_step_name_en,
+status_fabrication_step_name_fr,
+status_fabrication_objective,
+status_fabrication_operating_mode,
+status_fabrication_observations,
+status_fabrication_designation,
+status_weighed_temperature
+
+)) 
+WHERE 
+  column_value IN ('OK', 'DIFFERENT')
+GROUP BY 
+  column_name

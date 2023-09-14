@@ -1,0 +1,431 @@
+
+
+/********************************************/
+
+
+
+
+/********* BUSINESS VALIDATION TEST *********/
+
+
+
+
+/* SDDS-SF : Socle            ***************/
+
+
+
+
+/* Table-BO : Socle safety features **********/
+
+
+
+
+/* Requestor : ******************************/
+
+
+
+
+/* Author :YONGA fils jacques     ******************************/
+
+
+
+
+/* Creation date : 02/08/2023  *************************/
+
+
+
+
+/* Comment :   ******************************/
+
+
+
+
+/* Update date :   ***************************/
+
+
+
+
+/*  *****************/
+
+
+
+
+CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_socle_safety_features AS
+
+
+SELECT DISTINCT
+
+  b.id_scl_socle AS socle_id_sk,
+
+  b.key_scl_socle AS socle_source_id_sk,
+
+  a.cod_scl_socle AS socle_code_sk,
+
+  a.txt_scl_socle_version AS socle_version_sk,
+
+  a.flg_lastversion AS last_socle_version_flag_sk,
+
+  a.flg_lastversion_published AS last_socle_published_version_flag_sk,
+  
+  b.key_scl_attribute_ref AS  safety_feature_attribute_source_id_sk,
+
+  b.cod_scl_attribute_ref AS  safety_feature_attribute_code_sk,
+
+  b.nam_scl_attribute_ref_en  AS  safety_feature_attribute_name_en_sk,
+
+  b.nam_scl_attribute_ref_fr  AS safety_feature_attribute_name_fr_sk,
+
+  b.key_scl_attribute_occ  AS  safety_feature_attribute_value_source_id_sk,
+
+  b.cod_scl_attribute_occ  AS   safety_feature_attribute_value_code_sk,
+
+  b.nam_scl_attribute_occ_en  AS  safety_feature_attribute_value_name_en_sk,
+
+  b.nam_scl_attribute_occ_fr  AS  safety_feature_attribute_value_name_fr_sk
+
+
+  FROM  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_socle  a
+
+  
+  left join  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_attribute AS b on  a.id_scl_socle=b.id_scl_socle
+
+  where cod_scl_attribute_ref IN ('SAF_ZONE','SAF_FRACT','SAF_PARTI','SAFETY_TAG_OK', 'TAG_SAFETY_OK', 'SAF_COND');
+
+
+
+
+   
+CREATE or REPLACE  table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.comparaison_sdds_socle_safety_features` AS
+
+
+
+
+SELECT
+
+
+   DISTINCT
+
+   t1.socle_id,t2.socle_id_sk,
+
+      CASE
+
+        WHEN t1.socle_id= t2.socle_id_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_id,
+
+   
+
+      t1.socle_source_id,t2.socle_source_id_sk,
+
+      CASE
+
+        WHEN t1.socle_source_id = t2.socle_source_id_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_source_id,
+
+
+
+
+      t1.socle_code ,t2.socle_code_sk,
+
+      CASE
+
+        WHEN t1.socle_code = socle_code_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_code  ,
+
+
+
+
+         t1.socle_version,t2.socle_version_sk,
+
+      CASE
+
+        WHEN t1.socle_version = socle_version_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_version ,
+
+
+
+
+       t1.last_socle_version_flag,t2.last_socle_version_flag_sk,
+
+      CASE
+
+        WHEN t1.last_socle_version_flag = t2.last_socle_version_flag_sk Or (t1.last_socle_version_flag is  null and t2.last_socle_version_flag_sk is null ) THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_last_socle_version_flag,
+
+
+
+
+      t1.last_socle_published_version_flag ,t2.last_socle_published_version_flag_sk,
+
+      CASE
+
+       WHEN t1.last_socle_published_version_flag= t2.last_socle_published_version_flag_sk Or
+       
+        (t1.last_socle_published_version_flag is  null and t2.last_socle_published_version_flag_sk is  
+            null ) 
+            THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_last_socle_published_version_flag,
+
+
+
+
+       t1.safety_feature_attribute_source_id ,t2.safety_feature_attribute_source_id_sk,
+
+      CASE
+
+        WHEN t1.safety_feature_attribute_source_id = t2.safety_feature_attribute_source_id_sk Or
+        
+         (t1.safety_feature_attribute_source_id is null and t2.safety_feature_attribute_source_id_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_safety_feature_attribute_source_id,
+
+
+
+
+
+         t1.safety_feature_attribute_code,t2.safety_feature_attribute_code_sk,
+
+      CASE
+
+        WHEN t1.safety_feature_attribute_code = t2.safety_feature_attribute_code_sk 
+        
+        Or (t1.safety_feature_attribute_code is  null and t2.safety_feature_attribute_code_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_safety_feature_attribute_code ,
+
+
+
+
+        t1.safety_feature_attribute_name_en,t2.safety_feature_attribute_name_en_sk,
+
+      CASE
+
+        WHEN t1.safety_feature_attribute_name_en = t2.safety_feature_attribute_name_en_sk 
+        
+        Or (t1.safety_feature_attribute_name_en is  null  and t2.safety_feature_attribute_name_en_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_safety_feature_attribute_name_en,
+
+
+
+
+         t1.safety_feature_attribute_name_fr,t2.safety_feature_attribute_name_fr_sk,
+
+      CASE
+
+        WHEN t1.safety_feature_attribute_name_fr = t2.safety_feature_attribute_name_fr_sk 
+        
+        Or (t1.safety_feature_attribute_name_fr is  null  and t2.safety_feature_attribute_name_fr_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_safety_feature_attribute_name_fr,
+
+
+
+      
+         t1.safety_feature_attribute_value_source_id ,t2.safety_feature_attribute_value_source_id_sk,
+
+      CASE
+
+        WHEN t1.safety_feature_attribute_value_source_id  = t2.safety_feature_attribute_value_source_id_sk
+        
+        Or (t1.safety_feature_attribute_value_source_id is  null  and t2.safety_feature_attribute_value_source_id_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_safety_feature_attribute_value_source_id,
+
+
+
+
+
+           t1.safety_feature_attribute_value_code ,t2.safety_feature_attribute_value_code_sk,
+
+      CASE
+
+        WHEN t1.safety_feature_attribute_value_code = t2.safety_feature_attribute_value_code_sk
+        
+        Or (t1.safety_feature_attribute_value_code is  null  and t2.safety_feature_attribute_value_code_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_safety_feature_attribute_value_code,
+
+
+
+
+      t1.safety_feature_attribute_value_name_en ,t2.safety_feature_attribute_value_name_en_sk,
+
+      CASE
+
+        WHEN t1.safety_feature_attribute_value_name_en  = t2.safety_feature_attribute_value_name_en_sk
+        
+        Or (t1.safety_feature_attribute_value_name_en  is  null  and t2.safety_feature_attribute_value_name_en_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_safety_feature_attribute_value_name_en,
+
+
+
+
+
+        t1.safety_feature_attribute_value_name_fr  ,t2.safety_feature_attribute_value_name_fr_sk,
+
+      CASE
+
+        WHEN t1.safety_feature_attribute_value_name_fr = t2.safety_feature_attribute_value_name_fr_sk
+        
+        Or (t1.safety_feature_attribute_value_name_fr  is  null  and t2.safety_feature_attribute_value_name_fr_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_safety_feature_attribute_value_name_fr
+
+
+
+
+
+
+      FROM  `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9ac_socle_eu_pd.soc_socle_safety_features` AS t1  full outer join  
+
+
+      `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_socle_safety_features` AS t2
+
+       
+     on
+
+      (t1.socle_id = t2.socle_id_sk) and (t1.safety_feature_attribute_value_source_id = t2.safety_feature_attribute_value_source_id_sk)
+
+    ORDER BY
+
+     t1.socle_id;
+
+
+
+
+
+
+CREATE or replace table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.result_test_sdds_socle_safety_features` AS
+
+
+
+
+SELECT
+
+  'SOC - Safety features' AS business_object,
+
+  column_name,
+
+  COUNTIF(column_value = 'OK') AS ok_count,
+
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count
+
+FROM (
+
+  SELECT
+
+    status_socle_id,
+
+    status_socle_source_id,
+
+    status_socle_code,
+
+    status_socle_version,
+
+    status_last_socle_version_flag,
+
+    status_last_socle_published_version_flag,
+
+    status_safety_feature_attribute_source_id,
+
+    status_safety_feature_attribute_code ,
+
+    status_safety_feature_attribute_name_en,
+
+    status_safety_feature_attribute_name_fr,
+
+    status_safety_feature_attribute_value_source_id,
+
+    status_safety_feature_attribute_value_code,
+
+    status_safety_feature_attribute_value_name_en,
+
+    status_safety_feature_attribute_value_name_fr
+    
+
+    
+
+
+
+
+  FROM
+
+    rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.comparaison_sdds_socle_safety_features
+
+)
+
+UNPIVOT (column_value FOR column_name IN (  
+  
+    status_socle_id,
+
+    status_socle_source_id,
+
+    status_socle_code,
+
+    status_socle_version,
+
+    status_last_socle_version_flag,
+
+    status_last_socle_published_version_flag,
+
+    status_safety_feature_attribute_source_id,
+
+    status_safety_feature_attribute_code ,
+
+    status_safety_feature_attribute_name_en,
+
+    status_safety_feature_attribute_name_fr,
+
+    status_safety_feature_attribute_value_source_id,
+
+    status_safety_feature_attribute_value_code,
+
+    status_safety_feature_attribute_value_name_en,
+
+    status_safety_feature_attribute_value_name_fr
+    
+
+   ))
+
+WHERE
+
+  column_value IN ('OK', 'DIFFERENT')
+
+GROUP BY
+
+  column_name;

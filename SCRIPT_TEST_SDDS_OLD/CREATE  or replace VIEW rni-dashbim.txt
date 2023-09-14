@@ -1,0 +1,66 @@
+CREATE  or replace VIEW rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.composition_architecture AS 
+
+Select distinct
+  id_scl_socle , key_scl_socle, id_scl_socle_composition ,key_scl_socle_composition , id_raw_material_ingredient  ,  key_raw_material_ingredient , cod_raw_material_ingredient  ,    typ_composition , concentration_min ,concentration_max, 
+
+ from  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_composition 
+  
+where cod_component_type ="RWM";
+ 
+ 
+ CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_composition_architecture AS
+
+SELECT DISTINCT
+
+  a.id_scl_socle AS socle_id_sk,
+
+  b.key_scl_socle AS socle_source_id_sk,
+
+  a.cod_scl_socle AS socle_code_sk,
+
+  b.id_scl_socle_composition AS socle_architecture_composition_id_sk,
+
+  b.key_scl_socle_composition  AS  socle_architecture_composition_source_id_sk,
+
+  a.txt_scl_socle_version AS socle_version_sk,
+
+  a.flg_lastversion AS last_socle_version_flag_sk,
+
+  a.flg_lastversion_published AS last_socle_published_version_flag_sk,
+
+  b.id_raw_material_ingredient  AS  component_raw_material_id_sk,
+
+  b.key_raw_material_ingredient AS  component_raw_material_source_sk,
+
+  b.cod_raw_material_ingredient  AS  component_raw_material_code_sk,
+
+ /* e.flg_rwm_primary AS component_primary_raw_material_flag_sk,
+
+  c.rm_category_code  AS  component_raw_material_category_code_sk,
+
+  c.rm_category_name_en AS component_raw_material_category_name_en_sk,
+    
+  c.rm_category_name_fr AS   component_raw_material_category_name_fr_sk,*/
+
+  b.typ_composition  AS  socle_architecture_logical_connectors_sk,
+
+  b.concentration_min AS  component_concentration_minimum_percentage_sk,
+
+  b.concentration_max  AS   component_concentration_maximum_percentage_sk
+
+FROM rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_socle a
+
+/*rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_socle*/
+
+left JOIN  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.composition_architecture AS b ON
+       a.id_scl_socle=b.id_scl_socle
+
+/*left join    rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_rwm_eu_pd.tbl_dim_raw_material AS c ON
+
+ b.id_raw_material_ingredient =c.id_raw_material
+
+ left  join   rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_raw_material_eu_pd.tbl_dim_raw_material AS e ON
+ 
+ b.id_raw_material_ingredient =e.id_raw_material*/
+ 
+ where  cod_raw_material_ingredient is not null and  id_raw_material_ingredient is not null  ;

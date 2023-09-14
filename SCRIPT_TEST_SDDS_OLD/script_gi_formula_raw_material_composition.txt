@@ -1,0 +1,355 @@
+/********************************************/
+
+/********* BUSINESS VALIDATION TEST *********/
+
+/* SDDS-SF :FGI        ***************/
+
+/* Table-BO : fgi_formula_raw_material_composition  **********/
+
+/* Requestor : ******************************/
+
+/* Author :YONGA Fils Jacques      ******************************/
+
+/* Creation date : 16/08/2023  *************************/
+
+/* Comment :   ******************************/
+
+/* Update date :  ***************************/
+
+/* Details of the update :  *****************/
+
+
+               
+# Create View for  Image (respecting the rules in specification file)
+CREATE  OR REPLACE TABLE  rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_raw_material_composition  AS 
+
+SELECT
+
+ DISTINCT 
+    a.id_formula as  formula_id_sk ,
+    b.key_formula as formula_source_id_sk,
+    a.cod_formula as formula_code_sk,
+    e.flg_open_dev as open_dev_formula_flag_sk,
+    a.id_raw_material as raw_material_id_sk,
+    c.ak_key_raw_material as raw_material_source_id_sk,
+    a.cod_raw_material as raw_material_code_sk,
+    d.flg_rwm_primary as  primary_raw_material_flag_sk,
+
+    CASE
+         WHEN substr(d.cod_ri_raw_material,1,2) = 'ST' AND (d.cod_kind = 'P' OR d.cod_rwm_cosmetic_type IN ('PARF-1','PARF-2') ) THEN 'STFRG'
+         WHEN substr(d.cod_ri_raw_material,1,2) = 'ST' AND (d.cod_kind <> 'P' AND d.cod_rwm_cosmetic_type NOT  IN ('PARF-1','PARF-2')) THEN 'STRM'
+         WHEN d.cod_kind = 'R' AND (d.cod_rwm_cosmetic_type IS NULL OR d.cod_rwm_cosmetic_type NOT IN ('PARF-1','PARF-2')) THEN 'RAVRM' 
+         WHEN d.cod_kind = 'R' AND (d.cod_rwm_cosmetic_type IN ('PARF-1','PARF-2')) THEN 'RAVFRG' 
+         WHEN d.cod_kind = 'P' OR d.cod_rwm_cosmetic_type IN ('PARF-1','PARF-2') THEN 'OAFRG'
+         ELSE 'OARM' 
+    END AS raw_material_category_code_sk,
+
+
+    CASE WHEN substr(d.cod_ri_raw_material,1,2) = 'ST' AND (d.cod_kind = 'P' OR d.cod_rwm_cosmetic_type IN ('PARF-1','PARF-2') ) THEN 'ST Fragrance' 
+         WHEN substr(d.cod_ri_raw_material,1,2) = 'ST' AND (d.cod_kind <> 'P' AND d.cod_rwm_cosmetic_type NOT  IN ('PARF-1','PARF-2')) THEN 'ST RM'
+         WHEN d.cod_kind = 'R' AND (d.cod_rwm_cosmetic_type IS NULL OR d.cod_rwm_cosmetic_type NOT IN ('PARF-1','PARF-2')) THEN 'Advanced Research RM' 
+         WHEN d.cod_kind = 'R' AND (d.cod_rwm_cosmetic_type IN ('PARF-1','PARF-2')) THEN  'Advanced Research Fragrance' 
+         WHEN d.cod_kind = 'P' OR d.cod_rwm_cosmetic_type IN ('PARF-1','PARF-2') THEN  'Fragrance'
+         ELSE  'RM'
+    END AS raw_material_category_name_en_sk,
+
+
+    CASE WHEN substr(d.cod_ri_raw_material,1,2) = 'ST' AND (d.cod_kind = 'P' OR d.cod_rwm_cosmetic_type IN ('PARF-1','PARF-2') ) THEN'Parfum ST'
+         WHEN substr(d.cod_ri_raw_material,1,2) = 'ST' AND (d.cod_kind <> 'P' AND d.cod_rwm_cosmetic_type NOT  IN ('PARF-1','PARF-2')) THEN 'MP ST'
+         WHEN d.cod_kind = 'R' AND (d.cod_rwm_cosmetic_type IS NULL OR d.cod_rwm_cosmetic_type NOT IN ('PARF-1','PARF-2')) THEN'MP Recherche Avancée'
+         WHEN d.cod_kind = 'R' AND (d.cod_rwm_cosmetic_type IN ('PARF-1','PARF-2')) THEN 'Parfum Recherche Avancée'
+         WHEN d.cod_kind = 'P' OR d.cod_rwm_cosmetic_type IN ('PARF-1','PARF-2') THEN 'Parfum'
+         ELSE 'MP'
+    END AS raw_material_category_name_fr_sk,
+
+
+    a.cod_formula_raw_material_role as raw_material_role_code_sk,
+
+    a.nam_formula_raw_material_role_en  as raw_material_role_name_en_sk,
+
+    a.nam_formula_raw_material_role_fr as raw_material_role_name_fr_sk,
+
+    a.num_concentration as  formula_raw_material_concentration_percentage_sk
+
+
+   
+   
+
+FROM (
+
+  SELECT
+  DISTINCT
+  id_formula,
+  id_raw_material,
+  cod_formula,
+  cod_raw_material,
+  cod_formula_raw_material_role,
+  nam_formula_raw_material_role_en,
+  nam_formula_raw_material_role_fr,
+  num_concentration
+  from rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_fct_formula_raw_material 
+
+
+)
+as a
+LEFT JOIN rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_raw_material_eu_pd.tbl_dim_raw_material as  d on  a.id_raw_material = d.id_raw_material 
+LEFT JOIN (
+    SELECT
+    DISTINCT 
+    id_raw_material,
+    ak_key_raw_material,
+    sys_dat_end 
+    from rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_rwm_eu_pd.tbl_dim_raw_material 
+    where sys_dat_end is null
+
+  )
+   as   c
+   on  a.id_raw_material = c.id_raw_material
+
+LEFT JOIN rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula as e  on a.id_formula = e.id_formula
+
+LEFT  JOIN(
+  SELECT
+  DISTINCT
+  id_formula,
+  key_formula,
+  sys_dat_end  
+  
+
+  from rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_fla_eu_pd.tbl_dim_formula
+  where sys_dat_end is null
+
+  )
+   as b  
+   on  a.id_formula = b.id_formula 
+
+
+  where a.id_formula is not null and d.id_raw_material is not null;
+
+  
+    
+ 
+
+   
+   
+
+
+
+
+
+# exhaustive result (comparaison between each 2 columns in the tables and its status ok/ko)
+CREATE OR REPLACE TABLE  `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_formula_raw_material_composition` AS 
+SELECT 
+      t1.formula_id,formula_id_sk, 
+      CASE 
+        WHEN t1.formula_id = t2.formula_id_sk  Or  (t1.formula_id is null  AND t2.formula_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_id,
+    
+      t1.formula_source_id,t2.formula_source_id_sk,
+      CASE 
+        WHEN t1.formula_source_id= t2.formula_source_id_sk Or  (t1.formula_source_id is null  AND t2.formula_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_source_id,
+
+      t1.formula_code,t2.formula_code_sk,
+      CASE 
+        WHEN t1.formula_code = t2.formula_code_sk Or  (t1.formula_code is null  AND t2.formula_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_code,
+
+
+
+          t1.open_dev_formula_flag,t2.open_dev_formula_flag_sk,
+      CASE 
+        WHEN t1.open_dev_formula_flag = t2.open_dev_formula_flag_sk Or  (t1.open_dev_formula_flag is null  AND t2.open_dev_formula_flag_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_open_dev_formula_flag,
+
+
+
+      
+          t1.raw_material_id,t2.raw_material_id_sk,
+      CASE 
+        WHEN t1.raw_material_id  = t2.raw_material_id_sk Or  (t1.raw_material_id is null  AND t2.raw_material_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_raw_material_id,
+
+
+      
+          t1.raw_material_source_id,t2.raw_material_source_id_sk,
+      CASE 
+        WHEN t1.raw_material_source_id = t2.raw_material_source_id_sk Or  (t1.raw_material_source_id is null  AND t2.raw_material_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_raw_material_source_id,
+
+
+
+      
+          t1.raw_material_code,t2.raw_material_code_sk,
+      CASE 
+        WHEN t1.raw_material_code = t2.raw_material_code_sk Or  (t1.raw_material_code is null  AND t2.raw_material_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_raw_material_code,
+
+
+          t1.primary_raw_material_flag ,t2.primary_raw_material_flag_sk,
+      CASE 
+        WHEN t1.primary_raw_material_flag  = t2.primary_raw_material_flag_sk Or
+        
+        
+          (t1.primary_raw_material_flag  is null  AND t2.primary_raw_material_flag_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_primary_raw_material_flag ,
+
+
+      
+          t1.raw_material_category_code ,t2.raw_material_category_code_sk,
+      CASE 
+        WHEN t1.raw_material_category_code = t2.raw_material_category_code_sk  Or
+        
+        
+          (t1.raw_material_category_code is null  AND t2.raw_material_category_code_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_raw_material_category_code,
+
+
+       
+          t1.raw_material_category_name_en ,t2.raw_material_category_name_en_sk,
+      CASE 
+        WHEN t1.raw_material_category_name_en = t2.raw_material_category_name_en_sk Or
+        
+        
+          (t1.raw_material_category_name_en is null  AND t2.raw_material_category_name_en_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_raw_material_category_name_en,
+
+
+
+            t1.raw_material_category_name_fr ,t2.raw_material_category_name_fr_sk,
+      CASE 
+        WHEN t1.raw_material_category_name_fr = t2.raw_material_category_name_fr_sk Or
+        
+        
+          (t1.raw_material_category_name_fr is null  AND t2.raw_material_category_name_fr_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_raw_material_category_name_fr,
+
+
+
+         t1.raw_material_role_code,t2.raw_material_role_code_sk,
+      CASE 
+        WHEN t1.raw_material_role_code= t2.raw_material_role_code_sk Or
+        
+        
+          (t1.raw_material_role_code is null  AND t2.raw_material_role_code_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_raw_material_role_code,
+
+
+
+
+        t1.raw_material_role_name_en,t2.raw_material_role_name_en_sk,
+      CASE 
+        WHEN t1.raw_material_role_name_en = t2.raw_material_role_name_en_sk Or
+        
+        
+          (t1.raw_material_role_name_en  is null  AND t2.raw_material_role_name_en_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_raw_material_role_name_en,
+
+
+      
+        t1.raw_material_role_name_fr,t2.raw_material_role_name_fr_sk,
+      CASE 
+        WHEN t1.raw_material_role_name_fr = t2.raw_material_role_name_fr_sk Or
+        
+        
+          (t1.raw_material_role_name_fr  is null  AND t2.raw_material_role_name_fr_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_raw_material_role_name_fr,
+
+
+
+
+      
+        t1.formula_raw_material_concentration_percentage,  t2.formula_raw_material_concentration_percentage_sk,
+      CASE 
+        WHEN t1.formula_raw_material_concentration_percentage = t2.formula_raw_material_concentration_percentage_sk Or
+        
+        
+          (t1.formula_raw_material_concentration_percentage  is null  AND t2.formula_raw_material_concentration_percentage_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_raw_material_concentration_percentage,
+
+
+
+
+    FROM 
+       `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9aa_md_formula_general_information_eu_pd.fgi_formula_raw_material_composition` AS t1 full join
+      `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_raw_material_composition` AS t2
+    
+     on  t1.formula_id = t2.formula_id_sk and t1.raw_material_id = t2.raw_material_id_sk
+
+     where t1.formula_id is not null and t1.raw_material_id  is not null  and  t2.formula_id_sk is not null and t2.raw_material_id_sk  is not null  
+
+    ORDER BY 
+     t1.formula_id;
+
+### the final result with nombre of ok for each column 
+CREATE OR REPLACE TABLE `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.result_sdds_md_fgi_formula_raw_material_composition` AS
+SELECT 
+  'FGI formula_raw_material_composition' AS business_object,
+  column_name, 
+  COUNTIF(column_value = 'OK') AS ok_count, 
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count 
+FROM (
+  SELECT 
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+
+status_open_dev_formula_flag,
+status_raw_material_id,
+status_raw_material_source_id,
+status_raw_material_code,
+status_primary_raw_material_flag,
+status_raw_material_category_code,
+status_raw_material_category_name_en,
+status_raw_material_category_name_fr,
+status_raw_material_role_code,
+status_raw_material_role_name_en,
+status_raw_material_role_name_fr,
+status_formula_raw_material_concentration_percentage
+
+
+
+
+
+  FROM 
+    rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_formula_raw_material_composition
+)
+UNPIVOT (column_value FOR column_name IN (    
+
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+
+status_open_dev_formula_flag,
+status_raw_material_id,
+status_raw_material_source_id,
+status_raw_material_code,
+status_primary_raw_material_flag,
+status_raw_material_category_code,
+status_raw_material_category_name_en,
+status_raw_material_category_name_fr,
+status_raw_material_role_code,
+status_raw_material_role_name_en,
+status_raw_material_role_name_fr,
+status_formula_raw_material_concentration_percentage
+
+)) 
+WHERE 
+  column_value IN ('OK', 'DIFFERENT')
+GROUP BY 
+  column_name

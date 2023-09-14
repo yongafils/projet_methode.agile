@@ -1,0 +1,160 @@
+/********************************************/
+
+/********* BUSINESS VALIDATION TEST *********/
+
+/* SDDS-SF : FGI           ***************/
+
+/* Table-BO : FGI - fil_full_ingredient_labelling_line_ingredients **********/
+
+/* Requestor : ******************************/
+
+/* Author :YONGA Fils Jacques    ******************************/
+
+/* Creation date : 08/08/2023  *************************/
+
+/* Comment :   ******************************/
+
+/* Update date :  ***************************/
+
+/* Details of the update :  *****************/
+
+
+
+
+
+CREATE or replace table  rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_fil_full_ingredient_labelling_line_ingredients AS 
+
+SELECT 
+
+distinct
+
+a.id_fil_label as fil_id_sk ,
+a.key_fil_label as fil_source_id_sk ,
+a.cod_fil as fil_number_sk ,
+b.id_fil_label_line  as fil_line_id_sk ,
+c.num_line as fil_line_number_sk,
+b.id_ingredient as ingredient_id_sk,
+b.key_ingredient as ingredient_source_id_sk,
+b.cod_ingredient as ingredient_number_sk
+
+FROM  (
+select 
+distinct
+id_fil_label_line,
+id_ingredient,
+key_ingredient,
+cod_ingredient
+from rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_full_ingredient_labelling_eu_pd.tbl_fct_label_line_ing ) as b 
+ left join rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_full_ingredient_labelling_eu_pd.tbl_dim_label_line as c  on b.id_fil_label_line = c.id_fil_label_line 
+ left  JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_full_ingredient_labelling_eu_pd.tbl_dim_label as a on c.id_fil_label = a.id_fil_label
+ where  c.id_fil_label is not null and  b.id_fil_label_line is not null;
+
+CREATE or replace TABLE  `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_fil_full_ingredient_labelling_line_ingredients` AS 
+SELECT 
+      t1.fil_id,fil_id_sk, 
+      CASE 
+        WHEN t1.fil_id = t2.fil_id_sk  Or  (t1.fil_id is null  AND t2.fil_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fil_id,
+    
+      t1.fil_source_id,t2.fil_source_id_sk,
+      CASE 
+        WHEN t1.fil_source_id= t2.fil_source_id_sk Or  (t1.fil_source_id is null  AND t2.fil_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fil_source_id,
+
+      t1.fil_number,t2.fil_number_sk,
+      CASE 
+        WHEN t1.fil_number = t2.fil_number_sk Or  (t1.fil_number is null  AND t2.fil_number_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fil_number ,
+
+        t1.fil_line_id ,t2.fil_line_id_sk,
+      CASE 
+        WHEN t1.fil_line_id = t2.fil_line_id_sk Or  (t1.fil_line_id is null  AND t2.fil_line_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fil_line_id ,
+      
+
+         t1.fil_line_number ,t2.fil_line_number_sk,
+      CASE 
+        WHEN t1.fil_line_number = t2.fil_line_number_sk Or  (t1.fil_line_number is null  AND t2.fil_line_number_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fil_line_number,
+
+
+            t1.ingredient_id ,t2.ingredient_id_sk,
+      CASE 
+        WHEN t1.ingredient_id = t2.ingredient_id_sk  Or  (t1.ingredient_id  is null  AND t2.ingredient_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_ingredient_id ,
+
+
+      
+            t1.ingredient_source_id ,t2.ingredient_source_id_sk,
+      CASE 
+        WHEN t1.ingredient_source_id = t2.ingredient_source_id_sk  Or  (t1.ingredient_source_id  is null  AND t2.ingredient_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_ingredient_source_id,
+
+
+           t1.ingredient_number ,t2.ingredient_number_sk,
+      CASE 
+        WHEN t1.ingredient_number = t2.ingredient_number_sk  Or  (t1.ingredient_number  is null  AND t2.ingredient_number_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_ingredient_number ,
+      
+      
+      
+
+ 
+    FROM 
+      itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9aa_md_formula_general_information_eu_pd.fil_full_ingredient_labelling_line_ingredients AS t1 full join 
+      rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_fil_full_ingredient_labelling_line_ingredients AS t2
+    on 
+      t1.fil_line_id  = t2.fil_line_id_sk and t1.fil_id=t2.fil_id_sk
+
+      where  t1.fil_line_id is not null and t1.fil_id is not null and t1.ingredient_id =t2.ingredient_id_sk
+    ORDER BY 
+     t1.fil_id;
+
+
+### the final result with nombre of ok for each column 
+CREATE OR REPLACE TABLE  `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.result_sdds_md_fgi_fil_full_ingredient_labelling_line_ingredients` AS
+SELECT 
+  'FGI - fil_full_ingredient_labelling_line_ingredients' AS business_object,
+  column_name, 
+  COUNTIF(column_value = 'OK') AS ok_count, 
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count 
+FROM (
+  SELECT 
+status_fil_id,
+status_fil_source_id,
+status_fil_number,
+status_fil_line_id,
+status_fil_line_number,
+status_ingredient_id,
+status_ingredient_source_id,
+status_ingredient_number
+
+
+FROM 
+    rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_fil_full_ingredient_labelling_line_ingredients
+)
+UNPIVOT (column_value FOR column_name IN (    
+
+status_fil_id,
+status_fil_source_id,
+status_fil_number,
+status_fil_line_id,
+status_fil_line_number,
+status_ingredient_id,
+status_ingredient_source_id,
+status_ingredient_number
+
+
+)) 
+WHERE 
+  column_value IN ('OK', 'DIFFERENT')
+GROUP BY 
+  column_name

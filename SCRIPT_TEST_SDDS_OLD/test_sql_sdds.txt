@@ -1,0 +1,419 @@
+
+
+/********************************************/
+
+
+
+
+/********* BUSINESS VALIDATION TEST *********/
+
+
+
+
+/* SDDS-SF : Socle            ***************/
+
+
+
+
+/* Table-BO : Socle Formula distance **********/
+
+
+
+
+/* Requestor : ******************************/
+
+
+
+
+/* Author :YONGA fils jacques     ******************************/
+
+
+
+
+/* Creation date : 24/07/2023  *************************/
+
+
+
+
+/* Comment :   ******************************/
+
+
+
+
+/* Update date :   ***************************/
+
+
+
+
+/*  *****************/
+
+
+
+
+
+
+## Delete views before executing the script
+
+DROP VIEW IF EXISTS `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.generic_formula`;
+
+DROP VIEW IF EXISTS `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_formula_distance`;
+
+DROP VIEW IF EXISTS `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.test_sdds_socle_formula_distance`;
+
+DROP VIEW IF EXISTS `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.result_test_sdds_socle_formula_`;
+
+
+
+
+                 
+
+
+
+
+# Create a view for generic formula informations  
+
+
+
+
+
+
+
+
+
+# Create View for SDDS lifecyle Image (respecting the rules in specification file)
+
+
+
+
+CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_formula_distance AS
+
+
+
+
+SELECT DISTINCT
+
+  a.id_scl_socle AS socle_id_sk,
+
+  a.key_scl_socle AS socle_source_id_sk,
+
+  b.cod_scl_socle AS socle_code_sk,
+
+  b.txt_scl_socle_version AS socle_version_sk,
+
+  b.flg_lastversion AS last_socle_version_flag_sk,
+
+  b.flg_lastversion_published AS last_socle_published_version_flag_sk,
+
+  a.id_formula AS formula_id_sk,
+
+  a.key_formula AS formula_source_id_sk,
+
+  c.cod_formula AS formula_code_sk,
+
+  a.formula_socle_distance AS distance_value_sk,
+
+  a.distance_order AS  socle_ranking_order_sk
+
+
+
+
+
+FROM rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_formula_socle_distance  a
+
+/*rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_socle*/
+
+
+
+
+LEFT JOIN rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_socle  AS b ON a.id_scl_socle=b.id_scl_socle
+
+LEFT JOIN rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula c ON a.id_formula=c.id_formula;
+
+
+
+
+
+
+
+
+
+
+
+# exhaustive result (comparaison between each 2 columns in the tables and its status ok/ko)
+
+
+
+
+drop table if exists `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.comparaison_sdds_socle_formula_distance`;
+
+
+
+
+CREATE or REPLACE  table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.comparaison_sdds_socle_formula_distance` AS
+
+
+
+
+SELECT
+   DISTINCT
+
+   t1.socle_id,t2.socle_id_sk,
+
+      CASE
+
+        WHEN t1.socle_id = t2.socle_id_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_id,
+
+   
+
+      t1.socle_source_id,t2.socle_source_id_sk,
+
+      CASE
+
+        WHEN t1.socle_source_id = socle_source_id_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_source_id,
+
+
+
+
+      t1.socle_code,t2.socle_code_sk,
+
+      CASE
+
+        WHEN t1.socle_code = socle_code_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_code ,
+
+
+
+
+         t1.socle_version,t2.socle_version_sk,
+
+      CASE
+
+        WHEN t1.socle_version = socle_version_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_version ,
+
+
+
+
+       t1.last_socle_version_flag,t2.last_socle_version_flag_sk,
+
+      CASE
+
+        WHEN t1.last_socle_version_flag = t2.last_socle_version_flag_sk Or (t1.last_socle_version_flag is null and t2.last_socle_version_flag_sk is null ) THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_last_socle_version_flag,
+
+
+
+
+      t1.last_socle_published_version_flag,t2.last_socle_published_version_flag_sk,
+
+      CASE
+
+        WHEN t1.last_socle_published_version_flag = t2.last_socle_published_version_flag_sk Or (t1.last_socle_published_version_flag is null and t2.last_socle_published_version_flag_sk is null ) THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_last_socle_published_version_flag,
+
+
+
+
+       t1.formula_id,t2.formula_id_sk,
+
+      CASE
+
+        WHEN t1.formula_id = t2.formula_id_sk Or (t1.formula_id is null and t2.formula_id_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_formula_id ,
+
+
+
+
+
+         t1.formula_source_id,t2.formula_source_id_sk,
+
+      CASE
+
+        WHEN t1.formula_source_id = t2.formula_source_id_sk Or (t1.formula_source_id is null and t2.formula_source_id_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_formula_source_id ,
+
+
+
+
+        t1.formula_code,t2.formula_code_sk,
+
+      CASE
+
+        WHEN t1.formula_code= t2.formula_code_sk Or (t1.formula_code is null and t2.formula_code_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_formula_code ,
+
+
+
+
+        t1.distance_value,t2.distance_value_sk,
+
+      CASE
+
+        WHEN t1.distance_value = t2.distance_value_sk Or (t1.distance_value is null and t2.distance_value_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_distance_value ,
+
+
+
+
+         t1.socle_ranking_order,t2.socle_ranking_order_sk,
+
+       
+
+     CASE
+
+        WHEN t1.socle_ranking_order = t2.socle_ranking_order_sk Or (t1.socle_ranking_order is null and socle_ranking_order_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_ranking_order
+
+
+
+
+       
+
+    FROM
+
+      `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9ac_socle_eu_pd.soc_socle_formula_distance` AS t1 INNER JOIN
+
+      `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_formula_distance` AS t2
+
+    on
+
+      (t1.socle_id = t2.socle_id_sk) And (t1.formula_id = t2.formula_id_sk) AND (t1.socle_ranking_order = t2.socle_ranking_order_sk)
+
+    ORDER BY
+
+     t1.socle_id;
+
+
+
+
+
+### the final result with nombre of ok for each column
+
+
+
+
+drop table if exists `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.result_test_sdds_socle_formula_distance`;
+
+
+
+
+CREATE or replace table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.result_test_sdds_socle_formula_distance` AS
+
+
+
+
+SELECT
+
+  'SOC - Formula distance' AS business_object,
+
+  column_name,
+
+  COUNTIF(column_value = 'OK') AS ok_count,
+
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count
+
+FROM (
+
+  SELECT
+
+    status_socle_id,
+
+    status_socle_source_id,
+
+    status_socle_code,
+
+    status_socle_version,
+
+    status_last_socle_version_flag,
+
+    status_last_socle_published_version_flag,
+
+    status_formula_id,
+
+    status_formula_source_id,
+
+    status_formula_code,
+
+    status_distance_value,
+
+    status_socle_ranking_order
+
+
+
+
+  FROM
+
+    rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.comparaison_sdds_socle_formula_distance
+
+)
+
+UNPIVOT (column_value FOR column_name IN (    status_socle_id,
+
+    status_socle_source_id,
+
+    status_socle_code,
+
+    status_socle_version,
+
+    status_last_socle_version_flag,
+
+    status_last_socle_published_version_flag,
+
+    status_formula_id,
+
+    status_formula_source_id,
+
+    status_formula_code,
+
+    status_distance_value,
+
+    status_socle_ranking_order
+
+
+
+
+
+))
+
+WHERE
+
+  column_value IN ('OK', 'DIFFERENT')
+
+GROUP BY
+
+  column_name;

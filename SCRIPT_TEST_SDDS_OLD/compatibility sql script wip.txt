@@ -1,0 +1,49 @@
+
+/*  *****************/
+
+
+CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_compatibility AS
+
+SELECT DISTINCT
+
+  b.id_scl_socle AS socle_id_sk,
+
+  b.key_scl_socle AS socle_source_id_sk,
+
+  a.cod_scl_socle AS socle_code_sk,
+
+  a.txt_scl_socle_version AS socle_version_sk,
+
+  a.flg_lastversion AS last_socle_version_flag_sk,
+
+  a.flg_lastversion_published AS last_socle_published_version_flag_sk,
+
+  c.key_scl_attribute_ref  AS  compatibility_assessment_source_id_sk,
+
+  c.cod_scl_attribute_ref  AS   compatibility_assessment_code_sk ,  
+
+  c.nam_scl_attribute_ref_en  AS compatibility_assessment_name_en_sk,
+
+  c.nam_scl_attribute_ref_fr AS   compatibility_assessment_name_fr_sk,
+
+  d.txt_value_en AS  compatibility_assessment_comment_en_sk,
+
+  d.txt_value_fr AS compatibility_assessment_comment_fr_sk,
+    
+  e.key_scl_attribute_occ AS  compatibility_technology_source_id_sk,
+
+  e.cod_scl_attribute_occ AS compatibility_technology_code_sk,
+
+  e.nam_scl_attribute_occ_en  AS  compatibility_technology_name_en_sk,
+
+  e.nam_scl_attribute_occ_fr AS   compatibility_technology_name_fr_sk,
+  
+  f.val_numeric  AS   compatibility_technology_version_sk
+
+  FROM    rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_socle a
+   
+  LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_attribute AS b ON  a.id_scl_socle=b.id_scl_socle 
+  LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_attribute AS c ON  a.id_scl_socle=c.id_scl_socle and c.cod_scl_attribute_ref ='VAL_COMPAT'
+  LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_attribute AS d ON  a.id_scl_socle=d.id_scl_socle and d.cod_scl_attribute_ref ='VAL_COMPAT_COM'
+  LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_attribute AS e ON  a.id_scl_socle=e.id_scl_socle and e.cod_scl_attribute_ref = 'COMPAT_NAME'
+  LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_attribute AS f ON  a.id_scl_socle=e.id_scl_socle and f.cod_scl_attribute_ref = 'COMPAT_VERSION';

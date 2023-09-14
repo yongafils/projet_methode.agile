@@ -1,0 +1,281 @@
+/********************************************/
+
+/********* BUSINESS VALIDATION TEST *********/
+
+/* SDDS-SF :FGI        ***************/
+
+/* Table-BO : fgi_formula_lifecycle **********/
+
+/* Requestor : ******************************/
+
+/* Author :YONGA Fils Jacques   ******************************/
+
+/* Creation date : 03/08/2023  *************************/
+
+/* Comment :   ******************************/
+
+/* Update date :  ***************************/
+
+/* Details of the update :  *****************/
+
+
+
+                   
+    
+
+               
+/* Create View for  Image (respecting the rules in specification file)*/
+
+select count(*), count (distinct formula_id_sk) from rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_lifecycle;
+CREATE or replace VIEW  rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_lifecycle AS 
+
+SELECT
+    a.id_formula as  formula_id_sk ,
+    b.key_formula as formula_source_id_sk,
+    a.cod_formula as formula_code_sk,
+   
+    a.cod_formula_status AS formula_status_code_sk,
+    a.nam_formula_status_en AS formula_status_name_en_sk,
+    a.nam_formula_status_fr AS formula_status_name_fr_sk,
+    c.cod_production_status AS formula_production_status_code_sk,
+    c.nam_production_status_en AS formula_production_status_name_en_sk,
+    c.nam_production_status_fr AS formula_production_status_name_fr_sk,
+    a.flg_formula_active AS active_formula_flag_sk,
+    a.dat_creation  AS  formula_creation_date_sk,
+    a.dat_modification  AS formula_last_edition_date_sk,
+    a.dat_first_officialization  AS formula_first_officialization_date_sk,
+    a.dat_first_production  AS  formula_first_production_date_sk,
+    a.dat_last_replacement AS  formula_last_replacement_date_sk,/*erreur dans spec "ecrit dans spec dat_last_remplacement"*/
+    a.dat_canceled_formula  AS  formula_cancellation_date_sk
+
+
+FROM
+    rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula a
+  LEFT JOIN
+    rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_fla_eu_pd.tbl_dim_formula b
+  ON
+    a.id_formula = b.id_formula 
+    
+  LEFT JOIN rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula_attribute c on  a.id_formula = c.id_formula 
+
+where b.sys_dat_end is null;
+
+
+
+# exhaustive result (comparaison between each 2 columns in the tables and its status ok/ko)
+
+CREATE or replace VIEW `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_formula_lifecycle` AS 
+SELECT 
+      t1.formula_id,formula_id_sk, 
+      CASE 
+        WHEN t1.formula_id = t2.formula_id_sk  Or  (t1.formula_id is null  AND t2.formula_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_id,
+    
+      t1.formula_source_id,t2.formula_source_id_sk,
+      CASE 
+        WHEN t1.formula_source_id= t2.formula_source_id_sk Or  (t1.formula_source_id is null  AND t2.formula_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_source_id,
+
+      t1.formula_code,t2.formula_code_sk,
+      CASE 
+        WHEN t1.formula_code = t2.formula_code_sk Or  (t1.formula_code is null  AND t2.formula_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_code ,
+
+         t1.formula_status_code,t2.formula_status_code_sk,
+      CASE 
+        WHEN t1.formula_status_code = t2.formula_status_code_sk Or  (t1.formula_status_code is null  AND t2.formula_status_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_status_code ,
+
+
+       t1.formula_status_name_en,t2.formula_status_name_en_sk, 
+      CASE 
+        WHEN t1.formula_status_name_en = t2.formula_status_name_en_sk 
+        
+        Or  (t1.formula_status_name_en is null  AND t2.formula_status_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_status_name_en,
+
+
+       t1.formula_status_name_fr,t2.formula_status_name_fr_sk, 
+      CASE 
+        WHEN t1.formula_status_name_fr = t2.formula_status_name_fr_sk 
+        
+        Or  (t1.formula_status_name_fr is null  AND t2.formula_status_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_status_name_fr,
+
+
+ 
+
+      t1.formula_production_status_code,t2.formula_production_status_code_sk,
+        CASE 
+        WHEN t1.formula_production_status_code = t2.formula_production_status_code_sk 
+        
+        Or  (t1.formula_production_status_code is null  AND t2.formula_production_status_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_production_status_code, 
+
+
+      t1.formula_production_status_name_en , t2.formula_production_status_name_en_sk,
+      CASE 
+        WHEN t1.formula_production_status_name_en = t2.formula_production_status_name_en_sk
+        
+          Or  (t1.formula_production_status_name_en is null  AND t2.formula_production_status_name_en_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_production_status_name_en,
+
+
+      
+      t1.formula_production_status_name_fr , t2.formula_production_status_name_fr_sk,
+      CASE 
+        WHEN t1.formula_production_status_name_fr = t2.formula_production_status_name_fr_sk
+        
+          Or  (t1.formula_production_status_name_fr is null  AND t2.formula_production_status_name_fr_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_production_status_name_fr,
+
+
+
+     
+
+     t1.active_formula_flag, t2.active_formula_flag_sk,
+      CASE 
+        WHEN t1.active_formula_flag = t2.active_formula_flag_sk
+        
+          Or  (t1.active_formula_flag is null  AND t2.active_formula_flag_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_active_formula_flag, 
+
+
+
+      
+     t1.formula_creation_date, t2.formula_creation_date_sk,
+      CASE 
+        WHEN t1.formula_creation_date = t2.formula_creation_date_sk
+        
+          Or  (t1.formula_creation_date is null  AND t2.formula_creation_date_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_creation_date, 
+
+
+
+       t1.formula_last_edition_date, t2.formula_last_edition_date_sk,
+      CASE 
+        WHEN t1.formula_last_edition_date = t2.formula_last_edition_date_sk
+        
+          Or  (t1.formula_last_edition_date is null  AND t2.formula_last_edition_date_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_last_edition_date, 
+
+
+
+
+       t1.formula_first_officialization_date, t2.formula_first_officialization_date_sk,
+      CASE 
+        WHEN t1.formula_first_officialization_date = t2.formula_first_officialization_date_sk
+        
+          Or  (t1.formula_first_officialization_date is null  AND t2.formula_first_officialization_date_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_first_officialization_date, 
+
+
+
+      
+       t1.formula_first_production_date , t2.formula_first_production_date_sk,
+      CASE 
+        WHEN t1.formula_first_production_date = t2.formula_first_production_date_sk
+        
+          Or  (t1.formula_first_production_date  is null  AND t2.formula_first_production_date_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_first_production_date, 
+
+
+
+      
+       t1.formula_last_replacement_date , t2.formula_last_replacement_date_sk,
+      CASE 
+        WHEN t1.formula_last_replacement_date = t2.formula_last_replacement_date_sk
+        
+          Or  (t1.formula_last_replacement_date  is null  AND t2.formula_last_replacement_date_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_last_replacement_date, 
+
+
+
+        t1.formula_cancellation_date , t2.formula_cancellation_date_sk,
+      CASE 
+        WHEN t1.formula_cancellation_date = t2.formula_cancellation_date_sk
+        
+          Or  (t1.formula_cancellation_date  is null  AND t2.formula_cancellation_date_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_cancellation_date, 
+
+
+
+ 
+    FROM 
+      `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9aa_md_formula_general_information_eu_pd.fgi_formula_lifecycle` AS t1, 
+      `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_lifecycle` AS t2
+    WHERE 
+      t1.formula_id = t2.formula_id_sk
+    ORDER BY 
+     t1.formula_id;
+
+### the final result with nombre of ok for each column 
+CREATE  TABLE   `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.result_sdds_md_fgi_formula_lifecycle_yfj` AS
+SELECT 
+  'FGI - Formula lifecycle' AS business_object,
+  column_name, 
+  COUNTIF(column_value = 'OK') AS ok_count, 
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count 
+FROM (
+  SELECT 
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_formula_status_name_en,
+status_formula_status_name_fr,
+status_formula_production_status_code,
+status_formula_production_status_name_en,
+status_formula_production_status_name_fr,
+status_active_formula_flag,
+status_formula_creation_date,
+status_formula_last_edition_date,
+status_formula_first_officialization_date,
+status_formula_first_production_date,
+status_formula_last_replacement_date,
+status_formula_cancellation_date
+
+
+
+
+  FROM 
+    rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_formula_lifecycle
+)
+UNPIVOT (column_value FOR column_name IN (    
+
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_formula_status_name_en,
+status_formula_status_name_fr,
+status_formula_production_status_code,
+status_formula_production_status_name_en,
+status_formula_production_status_name_fr,
+status_active_formula_flag,
+status_formula_creation_date,
+status_formula_last_edition_date,
+status_formula_first_officialization_date,
+status_formula_first_production_date,
+status_formula_last_replacement_date,
+status_formula_cancellation_date
+
+)) 
+WHERE 
+  column_value IN ('OK', 'DIFFERENT')
+GROUP BY 
+  column_name

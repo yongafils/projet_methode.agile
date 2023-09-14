@@ -1,0 +1,602 @@
+
+
+
+
+
+
+
+
+
+
+
+/********************************************/
+
+
+
+
+/********* BUSINESS VALIDATION TEST *********/
+
+
+
+
+/* SDDS-SF : Technology            ***************/
+
+
+
+
+/* Table-BO : TEC - Technology Composition Architecture **********/
+
+
+
+
+/* Requestor : ******************************/
+
+
+
+
+/* Author :YONGA fils jacques     ******************************/
+
+
+
+
+/* Creation date : 07/09/2023  *************************/
+
+
+
+
+/* Comment :   ******************************/
+
+
+
+
+/* Update date :   **************************/
+
+
+
+
+/*  *****************/
+
+
+ 
+
+
+
+
+
+CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.image_sdds_Technology_composition_architecture AS
+
+
+
+
+SELECT 
+DISTINCT
+
+
+a.id_tec_technology_composition as  technology_composition_id_sk,
+
+a.key_tec_technology_composition as  technology_composition_source_id_sk,
+
+a.id_tec_technology as  technology_id_sk,
+
+a.key_tec_technology as  technology_source_id_sk,
+
+b.cod_tec_technology as  technology_code_sk,
+
+b.txt_tec_version as   technology_version_sk,
+
+b.flg_lastversion as  last_technology_version_flag_sk,
+
+
+  CASE
+   WHEN b.txt_tec_version = (
+   SELECT MAX(sub.txt_tec_version)
+   FROM  rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology  AS sub
+   WHERE (
+    sub.key_tec_publish_status  = 1 OR
+   (sub.key_tec_publish_status  = 3 AND sub.flg_lastversion is FALSE and sub.sys_dat_end IS NULL)
+     ) AND sub.cod_tec_technology = b.cod_tec_technology
+       GROUP BY sub.cod_tec_technology
+      ) THEN TRUE
+   ELSE FALSE
+  END AS last_technology_published_version_flag_sk,
+
+
+  CASE
+  WHEN 
+  cod_component_type = 'RWM' THEN a.id_raw_material_ingredient
+  ELSE '#NA'
+  END AS  component_raw_material_id_sk,
+
+
+  CASE
+  WHEN 
+  cod_component_type = 'RWM' THEN a.key_raw_material_ingredient
+  ELSE '#NA'
+  END AS  component_raw_material_source_id_sk,
+
+
+  
+  CASE
+  WHEN 
+  cod_component_type = 'RWM' THEN a.cod_raw_material_ingredient
+  ELSE '#NA'
+  END  AS component_raw_material_code_sk,
+
+
+
+
+d.flg_rwm_primary as component_primary_raw_material_flag_sk,
+
+c.rm_category_code as  component_raw_material_category_code_sk,
+
+c.rm_category_name_en as  component_raw_material_category_name_en_sk,
+
+c.rm_category_name_fr as  component_raw_material_category_name_fr_sk,
+
+
+  CASE
+  WHEN 
+  cod_component_type = 'ING'  THEN a.id_raw_material_ingredient
+  ELSE '#NA'
+  END  AS component_ingredient_id_sk,
+
+
+
+  CASE
+  WHEN 
+  cod_component_type = 'ING'  THEN a.key_raw_material_ingredient
+  ELSE NULL
+  END  AS component_ingredient_source_id_sk,
+
+
+  CASE
+  WHEN 
+  cod_component_type = 'ING'  THEN a.cod_raw_material_ingredient
+  ELSE NULL
+  END  AS component_ingredient_number_sk,
+
+
+
+  
+a.cod_component_type as component_type_code_sk,
+
+a.nam_component_type_en as  component_type_name_en_sk,
+
+a.nam_component_type_fr as  component_type_name_fr_sk,
+
+a.concentration_min as  component_concentration_minimum_percentage_sk,
+
+a.concentration_max as component_concentration_maximum_percentage_sk,
+
+a.typ_composition as  logical_connector_sk
+
+
+
+
+
+
+
+
+from  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_technology_composition as   a 
+
+left join  rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology   as b   
+on a.id_tec_technology = b.id_tec_technology  and b.sys_dat_end IS NULL
+
+
+
+
+
+left join rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_raw_material_eu_pd.tbl_dim_raw_material as d
+on a.id_raw_material_ingredient = d.id_raw_material  
+
+left join 
+(
+select
+distinct 
+id_raw_material,
+rm_category_code,
+rm_category_name_en,
+rm_category_name_fr,
+sys_flg_active,
+sys_dat_end
+
+from rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_rwm_eu_pd.tbl_dim_raw_material 
+where sys_flg_active and sys_dat_end is null 
+
+)
+ as c
+on a.id_raw_material_ingredient = c.id_raw_material and  c.sys_flg_active and c.sys_dat_end is null;
+
+ 
+
+
+
+
+    
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+# exhaustive result (comparaison between each 2 columns in the tables and its status ok/ko)
+
+
+
+
+
+
+CREATE OR REPLACE TABLE `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.comparaison_sdds_Technology_composition_architecture` AS
+
+SELECT
+
+   DISTINCT
+
+    t1.technology_composition_id,
+    t2.technology_composition_id_sk,
+    CASE
+        WHEN t1.technology_composition_id = t2.technology_composition_id_sk 
+        OR (t1.technology_composition_id IS NULL AND t2.technology_composition_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_composition_id,
+
+
+     t1.technology_composition_source_id,
+    t2.technology_composition_source_id_sk,
+    CASE
+        WHEN t1.technology_composition_source_id  = t2.technology_composition_source_id_sk  
+        OR (t1.technology_composition_source_id  IS NULL AND t2.technology_composition_source_id_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_composition_source_id ,
+
+    
+
+
+
+    t1.technology_id,
+    t2.technology_id_sk,
+    CASE
+        WHEN t1.technology_id = t2.technology_id_sk OR (t1.technology_id IS NULL AND t2.technology_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_id,
+
+
+
+    t1.technology_source_id,
+    t2.technology_source_id_sk,
+    CASE
+        WHEN t1.technology_source_id = t2.technology_source_id_sk OR (t1.technology_source_id IS NULL AND t2.technology_source_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_source_id,
+    t1.technology_code,
+    t2.technology_code_sk,
+    CASE
+        WHEN t1.technology_code = t2.technology_code_sk OR (t1.technology_code IS NULL AND t2.technology_code_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_code,
+    t1.technology_version,
+    t2.technology_version_sk,
+    CASE
+        WHEN t1.technology_version = t2.technology_version_sk OR (t1.technology_version IS NULL AND t2.technology_version_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_version,
+    t1.last_technology_version_flag,
+    t2.last_technology_version_flag_sk,
+    CASE
+        WHEN t1.last_technology_version_flag = t2.last_technology_version_flag_sk OR (t1.last_technology_version_flag IS NULL AND t2.last_technology_version_flag_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_last_technology_version_flag,
+    t1.last_technology_published_version_flag,
+    t2.last_technology_published_version_flag_sk,
+    CASE
+        WHEN t1.last_technology_published_version_flag = t2.last_technology_published_version_flag_sk OR (t1.last_technology_published_version_flag IS NULL AND t2.last_technology_published_version_flag_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_last_technology_published_version_flag,
+
+
+
+    t1.component_raw_material_id,
+    t2.component_raw_material_id_sk,
+    CASE
+        WHEN t1.component_raw_material_id = t2.component_raw_material_id_sk
+         OR (t1.component_raw_material_id IS NULL AND t2.component_raw_material_id_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_raw_material_id,
+
+
+
+
+
+    t1.component_raw_material_source_id,
+    t2.component_raw_material_source_id_sk,
+    CASE
+        WHEN t1.component_raw_material_source_id = t2.component_raw_material_source_id_sk 
+         OR (t1.component_raw_material_source_id  IS NULL AND t2.component_raw_material_source_id_sk   IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_raw_material_source_id ,
+
+
+
+
+     t1.component_raw_material_code,
+    t2.component_raw_material_code_sk,
+    CASE
+        WHEN t1.component_raw_material_code = t2.component_raw_material_code_sk
+         OR (t1.component_raw_material_code   IS NULL AND t2.component_raw_material_code_sk   IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_raw_material_code,
+
+
+
+
+
+    t1.component_primary_raw_material_flag,
+    t2.component_primary_raw_material_flag_sk,
+    CASE
+        WHEN t1.component_primary_raw_material_flag  = t2.component_primary_raw_material_flag_sk 
+         OR (t1.component_primary_raw_material_flag  IS NULL AND t2.component_primary_raw_material_flag_sk    IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_primary_raw_material_flag ,
+
+
+
+
+    t1.component_raw_material_category_code,
+    t2.component_raw_material_category_code_sk,
+    CASE
+        WHEN t1.component_raw_material_category_code  = t2.component_raw_material_category_code_sk
+         OR (t1.component_raw_material_category_code  IS NULL 
+         AND t2.component_raw_material_category_code_sk   IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_raw_material_category_code ,
+   
+
+
+
+
+
+    t1.component_raw_material_category_name_en,
+    t2.component_raw_material_category_name_en_sk,
+    CASE
+   WHEN t1.component_raw_material_category_name_en   = t2.component_raw_material_category_name_en_sk  OR (t1.component_raw_material_category_name_en   IS NULL AND t2.component_raw_material_category_name_en_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_raw_material_category_name_en ,
+
+
+
+
+   t1.component_raw_material_category_name_fr,
+    t2.component_raw_material_category_name_fr_sk,
+    CASE
+   WHEN t1.component_raw_material_category_name_fr   = t2.component_raw_material_category_name_fr_sk  OR (t1.component_raw_material_category_name_fr   IS NULL AND t2.component_raw_material_category_name_fr_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_raw_material_category_name_fr ,
+    
+
+
+
+    t1.component_ingredient_id,
+    t2.component_ingredient_id_sk,
+    CASE
+   WHEN t1.component_ingredient_id  = t2.component_ingredient_id_sk
+     OR (t1.component_ingredient_id   IS NULL AND t2.component_ingredient_id_sk  IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_ingredient_id ,
+
+
+
+
+    
+    t1.component_ingredient_source_id,
+    t2.component_ingredient_source_id_sk,
+    CASE
+   WHEN t1.component_ingredient_source_id   = t2.component_ingredient_source_id_sk 
+     OR (t1.component_ingredient_source_id  IS NULL AND t2.component_ingredient_source_id_sk   IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_ingredient_source_id,
+
+
+
+    
+    t1.component_ingredient_number,
+    t2.component_ingredient_number_sk,
+    CASE
+   WHEN t1.component_ingredient_number  = t2.component_ingredient_number_sk 
+     OR (t1.component_ingredient_number  IS NULL AND t2.component_ingredient_number_sk   IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_ingredient_number ,
+
+
+
+    t1.component_type_code,
+    t2.component_type_code_sk,
+    CASE
+   WHEN t1.component_type_code = t2.component_type_code_sk 
+     OR (t1.component_type_code IS NULL AND t2.component_type_code_sk   IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_type_code ,
+
+
+
+     t1.component_type_name_en,
+    t2.component_type_name_en_sk,
+    CASE
+   WHEN t1.component_type_name_en  = t2.component_type_name_en_sk 
+     OR (t1.component_type_name_en IS NULL AND t2.component_type_name_en_sk   IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_type_name_en  ,
+
+
+
+    t1.component_type_name_fr,
+    t2.component_type_name_fr_sk,
+    CASE
+   WHEN t1.component_type_name_fr = t2.component_type_name_fr_sk 
+     OR (t1.component_type_name_fr IS NULL AND t2.component_type_name_fr_sk   IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_type_name_fr ,
+
+
+
+    t1.component_concentration_minimum_percentage,
+    t2.component_concentration_minimum_percentage_sk,
+    CASE
+   WHEN t1.component_concentration_minimum_percentage = t2.component_concentration_minimum_percentage_sk 
+     OR (t1.component_concentration_minimum_percentage  IS NULL AND t2.component_concentration_minimum_percentage_sk    IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_concentration_minimum_percentage  ,
+
+
+
+    
+    t1.component_concentration_maximum_percentage,
+    t2.component_concentration_maximum_percentage_sk,
+    CASE
+   WHEN t1.component_concentration_maximum_percentage = t2.component_concentration_maximum_percentage_sk 
+     OR (t1.component_concentration_maximum_percentage  IS NULL AND t2.component_concentration_maximum_percentage_sk     IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_component_concentration_maximum_percentage ,
+
+
+
+     t1.logical_connector,
+    t2.logical_connector_sk,
+    CASE
+   WHEN t1.logical_connector = t2.logical_connector_sk 
+     OR (t1.logical_connector  IS NULL AND t2.logical_connector_sk      IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_logical_connector,
+
+
+
+
+
+FROM
+     `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9ad_technology_eu_pd.tec_technology_composition_architecture`AS t1
+full JOIN
+    `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.image_sdds_Technology_composition_architecture` AS t2
+ON
+   t1.technology_composition_id = t2.technology_composition_id_sk /*and  t1.technology_id = t2.technology_id_sk */ /*and t1.component_ingredient_id  = t2.component_ingredient_id_sk */
+
+   /*where  t1.technology_composition_id = t2.technology_composition_id_sk and  t1.technology_composition_source_id = t2.technology_composition_source_id_sk and 
+   t1.component_ingredient_id  = t2.component_ingredient_id_sk*/
+
+    
+    
+ORDER BY
+    t1.technology_composition_id ;
+
+
+
+
+
+
+### the final result with nombre of ok for each column
+
+
+
+
+
+
+
+
+CREATE or replace table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.result_sdds_Technology_composition_architecture` AS
+
+
+
+
+SELECT
+
+  'TEC - Technology_composition_architecture' AS business_object,
+
+  column_name,
+
+  COUNTIF(column_value = 'OK') AS ok_count,
+
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count
+
+FROM (
+
+  SELECT
+
+status_technology_composition_id,
+status_technology_composition_source_id,
+status_technology_id,
+status_technology_source_id,
+status_technology_code,
+status_technology_version,
+status_last_technology_version_flag,
+status_last_technology_published_version_flag,
+status_component_raw_material_id,
+status_component_raw_material_source_id,
+status_component_raw_material_code,
+status_component_primary_raw_material_flag,
+status_component_raw_material_category_code,
+status_component_raw_material_category_name_en,
+status_component_raw_material_category_name_fr,
+status_component_ingredient_id,
+status_component_ingredient_source_id,
+status_component_ingredient_number,
+status_component_type_code,
+status_component_type_name_en,
+status_component_type_name_fr,
+status_component_concentration_minimum_percentage,
+status_component_concentration_maximum_percentage,
+status_logical_connector
+
+
+  FROM
+
+    rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.comparaison_sdds_Technology_composition_architecture
+
+)
+
+UNPIVOT (column_value FOR column_name IN (    
+
+
+status_technology_composition_id,
+status_technology_composition_source_id,
+status_technology_id,
+status_technology_source_id,
+status_technology_code,
+status_technology_version,
+status_last_technology_version_flag,
+status_last_technology_published_version_flag,
+status_component_raw_material_id,
+status_component_raw_material_source_id,
+status_component_raw_material_code,
+status_component_primary_raw_material_flag,
+status_component_raw_material_category_code,
+status_component_raw_material_category_name_en,
+status_component_raw_material_category_name_fr,
+status_component_ingredient_id,
+status_component_ingredient_source_id,
+status_component_ingredient_number,
+status_component_type_code,
+status_component_type_name_en,
+status_component_type_name_fr,
+status_component_concentration_minimum_percentage,
+status_component_concentration_maximum_percentage,
+status_logical_connector
+
+
+
+
+
+
+))
+
+WHERE
+
+  column_value IN ('OK', 'DIFFERENT')
+
+GROUP BY
+
+  column_name;

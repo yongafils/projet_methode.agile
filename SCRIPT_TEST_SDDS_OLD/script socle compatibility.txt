@@ -1,0 +1,474 @@
+
+/********* BUSINESS VALIDATION TEST *********/
+
+
+
+
+/* SDDS-SF : Socle            ***************/
+
+
+
+
+/* Table-BO : Socle Composition Compatibility **********/
+
+
+
+
+/* Requestor : ******************************/
+
+
+
+
+/* Author :YONGA fils jacques     ******************************/
+
+
+
+
+/* Creation date : 31/07/2023  *************************/
+
+
+
+
+/* Comment :   ******************************/
+
+
+
+
+/* Update date :   ***************************/
+
+
+
+
+/*  *****************/
+
+
+CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_compatibility AS
+
+SELECT DISTINCT
+
+  b.id_scl_socle AS socle_id_sk,
+
+  b.key_scl_socle AS socle_source_id_sk,
+
+  a.cod_scl_socle AS socle_code_sk,
+
+  a.txt_scl_socle_version AS socle_version_sk,
+
+  a.flg_lastversion AS last_socle_version_flag_sk,
+
+  a.flg_lastversion_published AS last_socle_published_version_flag_sk,
+
+  c.key_scl_attribute_ref  AS  compatibility_assessment_source_id_sk,
+
+  c.cod_scl_attribute_ref  AS   compatibility_assessment_code_sk ,  
+
+  c.nam_scl_attribute_ref_en  AS compatibility_assessment_name_en_sk,
+
+  c.nam_scl_attribute_ref_fr AS   compatibility_assessment_name_fr_sk,
+
+  d.txt_value_en AS  compatibility_assessment_comment_en_sk,
+
+  d.txt_value_fr AS compatibility_assessment_comment_fr_sk,
+    
+  e.key_scl_attribute_occ AS  compatibility_technology_source_id_sk,
+
+  e.cod_scl_attribute_occ AS compatibility_technology_code_sk,
+
+  e.nam_scl_attribute_occ_en  AS  compatibility_technology_name_en_sk,
+
+  e.nam_scl_attribute_occ_fr AS   compatibility_technology_name_fr_sk,
+  
+  f.val_numeric  AS   compatibility_technology_version_sk
+
+  FROM    rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_dim_socle a
+   
+  LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_attribute AS b ON  a.id_scl_socle=b.id_scl_socle 
+  LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_attribute AS c ON  a.id_scl_socle=c.id_scl_socle and c.cod_scl_attribute_ref ='VAL_COMPAT'
+  LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_attribute AS d ON  a.id_scl_socle=d.id_scl_socle and d.cod_scl_attribute_ref ='VAL_COMPAT_COM'
+  LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_attribute AS e ON  a.id_scl_socle=e.id_scl_socle and e.cod_scl_attribute_ref = 'COMPAT_NAME'
+  LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_socle_attribute AS f ON  a.id_scl_socle=e.id_scl_socle and f.cod_scl_attribute_ref = 'COMPAT_VERSION';
+
+
+
+
+
+  
+CREATE or REPLACE  table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.comparaison_sdds_socle_composition_compatibility` AS
+
+
+
+
+SELECT
+   DISTINCT
+
+   t1.socle_id,t2.socle_id_sk,
+
+      CASE
+
+        WHEN t1.socle_id = t2.socle_id_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_id,
+
+   
+
+      t1.socle_source_id,t2.socle_source_id_sk,
+
+      CASE
+
+        WHEN t1.socle_source_id = socle_source_id_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_source_id,
+
+
+
+
+      t1.socle_code,t2.socle_code_sk,
+
+      CASE
+
+        WHEN t1.socle_code = socle_code_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_code ,
+
+
+
+
+         t1.socle_version,t2.socle_version_sk,
+
+      CASE
+
+        WHEN t1.socle_version = socle_version_sk THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_socle_version ,
+
+
+
+
+       t1.last_socle_version_flag,t2.last_socle_version_flag_sk,
+
+      CASE
+
+        WHEN t1.last_socle_version_flag = t2.last_socle_version_flag_sk Or (t1.last_socle_version_flag is null and t2.last_socle_version_flag_sk is null ) THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_last_socle_version_flag,
+
+
+
+
+      t1.last_socle_published_version_flag,t2.last_socle_published_version_flag_sk,
+
+      CASE
+
+        WHEN t1.last_socle_published_version_flag = t2.last_socle_published_version_flag_sk 
+        
+        Or (t1.last_socle_published_version_flag is null and t2.last_socle_published_version_flag_sk is null ) THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_last_socle_published_version_flag,
+
+
+
+
+       t1.compatibility_assessment_source_id,t2.compatibility_assessment_source_id_sk,
+
+      CASE
+
+        WHEN t1.compatibility_assessment_source_id = t2.compatibility_assessment_source_id_sk
+        
+         Or (t1.compatibility_assessment_source_id is null and t2.compatibility_assessment_source_id_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_compatibility_assessment_source_id,
+
+
+
+
+
+         t1.compatibility_assessment_code,t2.compatibility_assessment_code_sk,
+
+      CASE
+
+        WHEN t1.compatibility_assessment_code = t2.compatibility_assessment_code_sk 
+        
+        Or (t1.compatibility_assessment_code is null and t2.compatibility_assessment_code_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_compatibility_assessment_code,
+
+
+
+
+        t1.compatibility_assessment_name_en ,t2.compatibility_assessment_name_en_sk,
+
+      CASE
+
+        WHEN t1.compatibility_assessment_name_en = t2.compatibility_assessment_name_en_sk 
+        
+        Or (t1.compatibility_assessment_name_en  is null and t2.compatibility_assessment_name_en_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_compatibility_assessment_name_en ,
+
+
+
+
+        t1.compatibility_assessment_name_fr, t2.compatibility_assessment_name_fr_sk,
+
+      CASE
+
+        WHEN t1.compatibility_assessment_name_fr = t2.compatibility_assessment_name_fr_sk 
+        
+        Or (t1.compatibility_assessment_name_fr is null and t2.compatibility_assessment_name_fr_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_compatibility_assessment_name_fr ,
+
+
+
+
+         t1.compatibility_assessment_comment_en,t2.compatibility_assessment_comment_en_sk,
+
+       
+ 
+     CASE
+
+        WHEN t1.compatibility_assessment_comment_en = t2.compatibility_assessment_comment_en_sk
+        
+         Or (t1.compatibility_assessment_comment_en  is null and t2.compatibility_assessment_comment_en_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_compatibility_assessment_comment_en,
+
+
+
+      
+ 
+     CASE
+
+        WHEN t1.compatibility_assessment_comment_fr = t2.compatibility_assessment_comment_fr_sk
+        
+         Or (t1.compatibility_assessment_comment_fr  is null and t2.compatibility_assessment_comment_fr_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_compatibility_assessment_comment_fr,
+
+
+
+      
+ 
+     CASE
+
+        WHEN t1.compatibility_technology_source_id = t2.compatibility_technology_source_id_sk
+        
+         Or (t1.compatibility_technology_source_id  is null and t2.compatibility_technology_source_id_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_compatibility_technology_source_id,
+
+
+
+      
+ 
+     CASE
+
+        WHEN t1.compatibility_technology_code = t2.compatibility_technology_code_sk
+        
+         Or (t1.compatibility_technology_code  is null and t2.compatibility_technology_code_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_compatibility_technology_code,
+
+
+
+      
+     CASE
+
+        WHEN t1.compatibility_technology_name_en = t2.compatibility_technology_name_en_sk
+        
+         Or (t1.compatibility_technology_name_en  is null and t2.compatibility_technology_name_en_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_compatibility_technology_name_en,
+
+
+
+        CASE
+
+        WHEN t1.compatibility_technology_name_fr = t2.compatibility_technology_name_fr_sk
+        
+         Or (t1.compatibility_technology_name_fr  is null and t2.compatibility_technology_name_fr_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_compatibility_technology_name_fr,
+
+
+
+      
+        CASE
+
+        WHEN t1.compatibility_technology_version = t2.compatibility_technology_version_sk
+        
+         Or (t1.compatibility_technology_version  is null and t2.compatibility_technology_version_sk is null )  THEN 'OK'
+
+        ELSE 'DIFFERENT'
+
+      END AS status_compatibility_technology_version,
+
+
+
+
+       
+
+    FROM
+
+      `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9ac_socle_eu_pd.soc_socle_compatibility` AS t1 full outer JOIN
+
+      `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_compatibility`  AS t2
+
+    on
+
+      (t1.socle_id = t2.socle_id_sk) 
+
+    ORDER BY
+
+     t1.socle_id;
+
+
+
+
+
+### the final result with nombre of ok for each column
+
+
+
+
+CREATE or replace table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.result_test_sdds_socle_compatibility` AS
+
+
+
+
+SELECT
+
+  'SOC - Compatibility' AS business_object,
+
+  column_name,
+
+  COUNTIF(column_value = 'OK') AS ok_count,
+
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count
+
+FROM (
+
+  SELECT
+
+    status_socle_id,
+
+    status_socle_source_id,
+
+    status_socle_code,
+
+    status_socle_version,
+
+    status_last_socle_version_flag,
+
+    status_last_socle_published_version_flag,
+
+    status_compatibility_assessment_source_id,
+
+    status_compatibility_assessment_code ,
+
+    status_compatibility_assessment_name_en,
+
+    status_compatibility_assessment_name_fr,
+
+    status_compatibility_assessment_comment_en,
+
+    status_compatibility_assessment_comment_fr,
+
+    status_compatibility_technology_source_id,
+
+    status_compatibility_technology_code,
+
+    status_compatibility_technology_name_en,
+
+    status_compatibility_technology_name_fr,
+
+    status_compatibility_technology_version
+
+      
+
+
+FROM
+
+   rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.comparaison_sdds_socle_composition_compatibility
+
+)
+
+UNPIVOT (column_value FOR column_name IN ( 
+  
+  
+     status_socle_id,
+
+    status_socle_source_id,
+
+    status_socle_code,
+
+    status_socle_version,
+
+    status_last_socle_version_flag,
+
+    status_last_socle_published_version_flag,
+
+    status_compatibility_assessment_source_id,
+
+    status_compatibility_assessment_code ,
+
+    status_compatibility_assessment_name_en,
+
+    status_compatibility_assessment_name_fr,
+
+    status_compatibility_assessment_comment_en,
+
+    status_compatibility_assessment_comment_fr,
+
+    status_compatibility_technology_source_id,
+
+    status_compatibility_technology_code,
+
+    status_compatibility_technology_name_en,
+
+    status_compatibility_technology_name_fr,
+
+    status_compatibility_technology_version
+
+  
+))
+
+WHERE
+
+  column_value IN ('OK', 'DIFFERENT')
+
+GROUP BY
+
+  column_name;

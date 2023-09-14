@@ -1,0 +1,670 @@
+/********************************************/
+
+/********* BUSINESS VALIDATION TEST *********/
+
+/* SDDS-SF : FGI           ***************/
+
+/* Table-BO : FGI - Formula Packaging Characteristics  **********/
+
+/* Requestor : ******************************/
+
+/* Author :YONGA Fils Jacques    ******************************/
+
+/* Creation date : 29/08/2023  *************************/
+
+/* Comment :   ******************************/
+
+/* Update date :  ***************************/
+
+/* Details of the update : script review and update *****************/
+
+
+
+
+# Create View for identification Image (respecting the rules in specification file)
+CREATE or replace table `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_packaging_characteristics` AS 
+
+SELECT
+
+a.id_formula  as formula_id_sk,
+
+b.key_formula as formula_source_id_sk,
+
+c.cod_formula as formula_code_sk,
+
+a.cod_presentation as formula_presentation_code_sk,
+
+a.nam_presentation_en as formula_presentation_name_en_sk,
+
+a.nam_presentation_fr as formula_presentation_name_fr_sk,
+
+a.cod_applicator  as  applicator_code_sk,
+ 
+a.nam_applicator_en as applicator_name_en_sk,
+  
+a.nam_applicator_fr as  applicator_name_fr_sk,
+
+a.cod_special_applicator_packaging as specific_applicator_packaging_code_sk,
+ 
+a.nam_special_applicator_packaging_en as specific_applicator_packaging_name_en_sk,
+
+a.nam_special_applicator_packaging_fr as specific_applicator_packaging_name_fr_sk,
+
+a.other_special_applicator_packaging_en as other_special_applicator_packaging_sk,
+
+a.cod_stem_orifice_shape as stem_orifice_shape_code_sk,
+
+a.nam_stem_orifice_shape_en as stem_orifice_shape_name_en_sk,
+
+a.nam_stem_orifice_shape_fr as stem_orifice_shape_name_fr_sk,
+
+CAST(a.nam_stem_orifices_count_en  as INTEGER) as stem_orifices_count_sk,
+
+a.stem_orifice_size_mm as stem_internal_metering_orifice_mm_sk,
+
+a.cod_valve_origin as  valve_origin_code_sk,
+
+a.nam_valve_origin_en as valve_origin_name_en_sk,
+
+a.nam_valve_origin_fr as valve_origin_name_fr_sk,
+
+a.cod_valve_usage as valve_recommended_usage_code_sk,
+
+a.nam_valve_usage_en as valve_recommended_usage_name_en_sk,
+
+a.nam_valve_usage_fr as valve_recommended_usage_name_fr_sk,
+
+a.cod_valve_type as valve_type_code_sk,
+ 
+a.nam_valve_type_en as valve_type_name_en_sk,
+ 
+a.nam_valve_type_fr as  valve_type_name_fr_sk,
+
+a.cod_actuator_type as  actuator_type_code_sk,
+
+a.nam_actuator_type_en  as actuator_type_name_en_sk,
+
+a.nam_actuator_type_fr as  actuator_type_name_fr_sk,
+
+CAST(a.nam_actuator_orifices_count_en as INTEGER) as  actuator_orifices_count_sk,
+
+a.actuator_orifice_diameter_mm as actuator_orifice_size_mm_sk,
+
+a.insert_reference_en as insert_reference_name_en_sk,
+
+a.insert_reference_fr as  insert_reference_name_fr_sk,
+
+a.cod_insert_structure  as insert_structure_code_sk,
+
+a.nam_insert_structure_en as insert_structure_name_en_sk,
+
+a.nam_insert_structure_fr as insert_structure_name_fr_sk,
+
+a.r_t_p_restricted_tail_piece_mm as restricted_tail_piece_mm_sk,
+
+a.product_acquired_range_en as product_acquired_range_name_en_sk,
+
+a.product_acquired_range_fr as product_acquired_range_name_fr_sk,
+
+a.vpt_vapor_phase_tap_mm  as  vapor_phase_tap_mm_sk
+
+FROM   rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula  as c 
+LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_fla_eu_pd.tbl_dim_formula as b   ON c.id_formula = b.id_formula and b.sys_dat_end is null
+LEFT JOIN   rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula_attribute as a on a.id_formula = b.id_formula;
+    
+  
+
+     
+ 
+
+
+
+
+
+# exhaustive result (comparaison between each 2 columns in the tables and its status ok/ko)
+
+
+CREATE OR REPLACE TABLE `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_formula_packaging_characteristics` AS 
+SELECT 
+      t1.formula_id,t2.formula_id_sk, 
+      CASE 
+        WHEN t1.formula_id = t2.formula_id_sk  Or  (t1.formula_id is null  AND t2.formula_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_id,
+    
+      t1.formula_source_id,t2.formula_source_id_sk,
+      CASE 
+        WHEN t1.formula_source_id= t2.formula_source_id_sk Or  (t1.formula_source_id is null  AND t2.formula_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_source_id,
+
+      t1.formula_code,t2.formula_code_sk,
+      CASE 
+        WHEN t1.formula_code = t2.formula_code_sk Or  (t1.formula_code is null  AND t2.formula_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_code,
+
+
+          t1.formula_presentation_code , t2.formula_presentation_code_sk,
+      CASE 
+        WHEN t1.formula_presentation_code = t2.formula_presentation_code_sk
+        
+         Or  (t1.formula_presentation_code  is null  AND t2.formula_presentation_code_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_presentation_code ,
+
+
+
+      
+          t1.formula_presentation_name_en , t2.formula_presentation_name_en_sk,
+      CASE 
+        WHEN t1.formula_presentation_name_en  = t2.formula_presentation_name_en_sk
+        
+         Or  (t1.formula_presentation_name_en is null  AND t2.formula_presentation_name_en_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_presentation_name_en ,
+
+
+
+            
+          t1.formula_presentation_name_fr , t2.formula_presentation_name_fr_sk,
+      CASE 
+        WHEN t1.formula_presentation_name_fr  = t2.formula_presentation_name_fr_sk
+        
+         Or  (t1.formula_presentation_name_fr is null  AND t2.formula_presentation_name_fr_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_presentation_name_fr ,
+
+
+
+           
+          t1.applicator_code, t2.applicator_code_sk,
+      CASE 
+        WHEN t1.applicator_code = t2.applicator_code_sk
+        
+         Or  (t1.applicator_code is null  AND t2.applicator_code_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_applicator_code ,
+
+
+
+
+          t1.applicator_name_en, t2.applicator_name_en_sk,
+      CASE 
+        WHEN t1.applicator_name_en  = t2.applicator_name_en_sk
+        
+         Or  (t1.applicator_name_en is null  AND t2.applicator_name_en_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_applicator_name_en ,
+
+
+
+         t1.applicator_name_fr, t2.applicator_name_fr_sk,
+      CASE 
+        WHEN t1.applicator_name_fr  = t2.applicator_name_fr_sk
+        
+         Or  (t1.applicator_name_fr is null  AND t2.applicator_name_fr_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_applicator_name_fr ,
+
+
+
+         t1.specific_applicator_packaging_code, t2.specific_applicator_packaging_code_sk,
+      CASE 
+        WHEN t1.specific_applicator_packaging_code  = t2.specific_applicator_packaging_code_sk
+        
+         Or  (t1.specific_applicator_packaging_code is null  AND t2.specific_applicator_packaging_code_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_specific_applicator_packaging_code ,
+
+
+
+      t1.specific_applicator_packaging_name_en , t2.specific_applicator_packaging_name_en_sk,
+      CASE 
+        WHEN t1.specific_applicator_packaging_name_en = t2.specific_applicator_packaging_name_en_sk
+        
+         Or  (t1.specific_applicator_packaging_name_en is null  AND t2.specific_applicator_packaging_name_en_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_specific_applicator_packaging_name_en ,
+
+
+      
+      t1.specific_applicator_packaging_name_fr , t2.specific_applicator_packaging_name_fr_sk,
+      CASE 
+        WHEN t1.specific_applicator_packaging_name_fr = t2.specific_applicator_packaging_name_fr_sk
+        
+         Or  (t1.specific_applicator_packaging_name_fr is null  AND t2.specific_applicator_packaging_name_fr_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_specific_applicator_packaging_name_fr ,
+
+
+
+
+      
+      t1.other_special_applicator_packaging, t2.other_special_applicator_packaging_sk,
+      CASE 
+        WHEN t1.other_special_applicator_packaging = t2.other_special_applicator_packaging_sk
+        
+         Or  (t1.other_special_applicator_packaging  is null  AND t2.other_special_applicator_packaging_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_other_special_applicator_packaging ,
+
+
+
+      t1.stem_orifice_shape_code, t2.stem_orifice_shape_code_sk,
+      CASE 
+        WHEN t1.stem_orifice_shape_code = t2.stem_orifice_shape_code_sk
+        
+         Or  (t1.stem_orifice_shape_code is null  AND t2.stem_orifice_shape_code_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_stem_orifice_shape_code,
+
+
+
+         t1.stem_orifice_shape_name_en, t2.stem_orifice_shape_name_en_sk,
+      CASE 
+        WHEN t1.stem_orifice_shape_name_en = t2.stem_orifice_shape_name_en_sk
+        
+         Or  (t1.stem_orifice_shape_name_en  is null  AND t2.stem_orifice_shape_name_en_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_stem_orifice_shape_name_en,
+
+
+      t1.stem_orifice_shape_name_fr, t2.stem_orifice_shape_name_fr_sk,
+      CASE 
+        WHEN t1.stem_orifice_shape_name_fr = t2.stem_orifice_shape_name_fr_sk
+        
+         Or  (t1.stem_orifice_shape_name_fr  is null  AND t2.stem_orifice_shape_name_fr_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_stem_orifice_shape_name_fr,
+
+
+
+
+       t1.stem_orifices_count , t2.stem_orifices_count_sk,
+      CASE 
+        WHEN t1.stem_orifices_count  = t2.stem_orifices_count_sk
+        
+         Or  (t1.stem_orifices_count  is null  AND t2.stem_orifices_count_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_stem_orifices_count,
+
+
+
+       t1.stem_internal_metering_orifice_mm , t2.stem_internal_metering_orifice_mm_sk,
+      CASE 
+        WHEN t1.stem_internal_metering_orifice_mm  = t2.stem_internal_metering_orifice_mm_sk
+        
+         Or  (t1.stem_internal_metering_orifice_mm  is null  AND t2.stem_internal_metering_orifice_mm_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_stem_internal_metering_orifice_mm,
+
+
+
+
+      
+       t1.valve_origin_code, t2.valve_origin_code_sk,
+      CASE 
+        WHEN t1.valve_origin_code  = t2.valve_origin_code_sk
+        
+         Or  (t1.valve_origin_code  is null  AND t2.valve_origin_code_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_valve_origin_code,
+
+
+
+      t1.valve_origin_name_en, t2.valve_origin_name_en_sk,
+      CASE 
+        WHEN t1.valve_origin_name_en  = t2.valve_origin_name_en_sk
+        
+         Or  (t1.valve_origin_name_en   is null  AND t2.valve_origin_name_en_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_valve_origin_name_en,
+
+
+
+
+       t1.valve_origin_name_fr, t2.valve_origin_name_fr_sk,
+      CASE 
+        WHEN t1.valve_origin_name_fr  = t2.valve_origin_name_fr_sk
+        
+         Or  (t1.valve_origin_name_fr   is null  AND t2.valve_origin_name_fr_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_valve_origin_name_fr,
+
+
+
+        t1.valve_recommended_usage_code, t2.valve_recommended_usage_code_sk,
+      CASE 
+        WHEN t1.valve_recommended_usage_code  = t2.valve_recommended_usage_code_sk
+        
+         Or  (t1.valve_recommended_usage_code   is null  AND t2.valve_recommended_usage_code_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_valve_recommended_usage_code,
+
+
+
+       t1.valve_recommended_usage_name_en, t2.valve_recommended_usage_name_en_sk,
+      CASE 
+        WHEN t1.valve_recommended_usage_name_en = t2.valve_recommended_usage_name_en_sk
+        
+         Or  (t1.valve_recommended_usage_name_en  is null  AND t2.valve_recommended_usage_name_en_sk    is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_valve_recommended_usage_name_en,
+
+
+
+         t1.valve_recommended_usage_name_fr, t2.valve_recommended_usage_name_fr_sk,
+      CASE 
+        WHEN t1.valve_recommended_usage_name_fr = t2.valve_recommended_usage_name_fr_sk
+        
+         Or  (t1.valve_recommended_usage_name_fr  is null  AND t2.valve_recommended_usage_name_fr_sk    is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_valve_recommended_usage_name_fr,
+
+
+
+
+      
+         t1.valve_type_code, t2.valve_type_code_sk,
+      CASE 
+        WHEN t1.valve_type_code = t2.valve_type_code_sk
+        
+         Or  (t1.valve_type_code  is null  AND t2.valve_type_code_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_valve_type_code,
+
+
+          t1.valve_type_name_en, t2.valve_type_name_en_sk,
+      CASE 
+        WHEN t1.valve_type_name_en = t2.valve_type_name_en_sk
+        
+         Or  (t1.valve_type_name_en is null  AND t2.valve_type_name_en_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_valve_type_name_en,
+
+
+      
+          t1.valve_type_name_fr, t2.valve_type_name_fr_sk,
+      CASE 
+        WHEN t1.valve_type_name_fr = t2.valve_type_name_fr_sk
+        
+         Or  (t1.valve_type_name_fr is null  AND t2.valve_type_name_fr_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_valve_type_name_fr,
+
+
+
+
+
+        t1.actuator_type_code, t2.actuator_type_code_sk,
+      CASE 
+        WHEN t1.actuator_type_code = t2.actuator_type_code_sk
+        
+         Or  (t1.actuator_type_code is null  AND t2.actuator_type_code_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_actuator_type_code,
+
+
+
+
+        t1.actuator_type_name_en, t2.actuator_type_name_en_sk,
+      CASE 
+        WHEN t1.actuator_type_name_en  = t2.actuator_type_name_en_sk
+        
+         Or  (t1.actuator_type_name_en  is null  AND t2.actuator_type_name_en_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_actuator_type_name_en,
+
+
+
+
+        t1.actuator_type_name_fr, t2.actuator_type_name_fr_sk,
+      CASE 
+        WHEN t1.actuator_type_name_fr  = t2.actuator_type_name_fr_sk
+        
+         Or  (t1.actuator_type_name_fr  is null  AND t2.actuator_type_name_fr_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_actuator_type_name_fr,
+
+
+
+
+
+      
+        t1.actuator_orifices_count, t2.actuator_orifices_count_sk,
+      CASE 
+        WHEN t1.actuator_orifices_count   = t2.actuator_orifices_count_sk
+        
+         Or  (t1.actuator_orifices_count  is null  AND t2.actuator_orifices_count_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_actuator_orifices_count,
+
+
+
+       
+       t1.actuator_orifice_size_mm, t2.actuator_orifice_size_mm_sk,
+      CASE 
+        WHEN t1.actuator_orifice_size_mm  = t2.actuator_orifice_size_mm_sk
+        
+         Or  (t1.actuator_orifice_size_mm is null  AND t2.actuator_orifice_size_mm_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_actuator_orifice_size_mm,
+
+
+
+
+      
+       t1.insert_reference_name_en, t2.insert_reference_name_en_sk,
+      CASE 
+        WHEN t1.insert_reference_name_en = t2.insert_reference_name_en_sk
+        
+         Or  (t1.insert_reference_name_en is null  AND t2.insert_reference_name_en_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_insert_reference_name_en,
+
+
+      
+       t1.insert_reference_name_fr, t2.insert_reference_name_fr_sk,
+      CASE 
+        WHEN t1.insert_reference_name_fr = t2.insert_reference_name_fr_sk
+        
+         Or  (t1.insert_reference_name_fr is null  AND t2.insert_reference_name_fr_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_insert_reference_name_fr,
+
+
+
+       t1.insert_structure_code, t2.insert_structure_code_sk,
+      CASE 
+        WHEN t1.insert_structure_code = t2.insert_structure_code_sk
+        
+         Or  (t1.insert_structure_code is null  AND t2.insert_structure_code_sk  is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_insert_structure_code,
+
+
+
+
+        t1.insert_structure_name_en , t2.insert_structure_name_en_sk,
+      CASE 
+        WHEN t1.insert_structure_name_en  = t2.insert_structure_name_en_sk 
+        
+         Or  (t1.insert_structure_name_en  is null  AND t2.insert_structure_name_en_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_insert_structure_name_en,
+
+
+
+      
+        t1.insert_structure_name_fr , t2.insert_structure_name_fr_sk,
+      CASE 
+        WHEN t1.insert_structure_name_fr  = t2.insert_structure_name_fr_sk 
+        
+         Or  (t1.insert_structure_name_fr  is null  AND t2.insert_structure_name_fr_sk   is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_insert_structure_name_fr,
+
+
+
+      
+        t1.restricted_tail_piece_mm , t2.restricted_tail_piece_mm_sk,
+      CASE 
+        WHEN t1.restricted_tail_piece_mm = t2.restricted_tail_piece_mm_sk 
+        
+         Or  (t1.restricted_tail_piece_mm  is null  AND t2.restricted_tail_piece_mm_sk    is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_restricted_tail_piece_mm,
+
+
+
+
+        t1.product_acquired_range_name_en, t2.product_acquired_range_name_en_sk,
+      CASE 
+        WHEN t1.product_acquired_range_name_en = t2.product_acquired_range_name_en_sk  
+        
+         Or  (t1.product_acquired_range_name_en   is null  AND t2.product_acquired_range_name_en_sk    is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_product_acquired_range_name_en,
+
+
+
+
+      
+        t1.product_acquired_range_name_fr, t2.product_acquired_range_name_fr_sk,
+      CASE 
+        WHEN t1.product_acquired_range_name_fr = t2.product_acquired_range_name_fr_sk  
+        
+         Or  (t1.product_acquired_range_name_fr   is null  AND t2.product_acquired_range_name_fr_sk    is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_product_acquired_range_name_fr,
+
+
+
+      
+        t1.vapor_phase_tap_mm , t2.vapor_phase_tap_mm_sk,
+      CASE 
+        WHEN t1.vapor_phase_tap_mm = t2.vapor_phase_tap_mm_sk  
+        
+         Or  (t1.vapor_phase_tap_mm   is null  AND t2.vapor_phase_tap_mm_sk    is null ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_vapor_phase_tap_mm,
+
+
+
+
+      
+    FROM 
+      `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9aa_md_formula_general_information_eu_pd.fgi_formula_packaging_characteristics` AS t1 full join 
+      `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_packaging_characteristics`  AS t2
+    on 
+      t1.formula_id = t2.formula_id_sk
+    ORDER BY 
+     t1.formula_id;
+
+
+### the final result with nombre of ok for each column 
+CREATE OR REPLACE TABLE `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.result_sdds_md_fgi_formula_packaging_characteristics` AS
+SELECT 
+  'FGI - Formula_packaging_characteristics' AS business_object,
+  column_name, 
+  COUNTIF(column_value = 'OK') AS ok_count, 
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count 
+FROM (
+  SELECT 
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_formula_presentation_code,
+status_formula_presentation_name_en,
+status_formula_presentation_name_fr,
+status_applicator_code,
+status_applicator_name_en,
+status_applicator_name_fr,
+status_specific_applicator_packaging_code,
+status_specific_applicator_packaging_name_en,
+status_specific_applicator_packaging_name_fr,
+status_other_special_applicator_packaging,
+status_stem_orifice_shape_code,
+status_stem_orifice_shape_name_en,
+status_stem_orifice_shape_name_fr,
+status_stem_orifices_count,
+status_stem_internal_metering_orifice_mm,
+status_valve_origin_code,
+status_valve_origin_name_en,
+status_valve_origin_name_fr,
+status_valve_recommended_usage_code,
+status_valve_recommended_usage_name_en,
+status_valve_recommended_usage_name_fr,
+status_valve_type_code,
+status_valve_type_name_en,
+status_valve_type_name_fr,
+status_actuator_type_code,
+status_actuator_type_name_en,
+status_actuator_type_name_fr,
+status_actuator_orifices_count,
+status_actuator_orifice_size_mm,
+status_insert_reference_name_en,
+status_insert_reference_name_fr,
+status_insert_structure_code,
+status_insert_structure_name_en,
+status_insert_structure_name_fr,
+status_restricted_tail_piece_mm,
+status_product_acquired_range_name_en,
+status_product_acquired_range_name_fr,
+status_vapor_phase_tap_mm
+
+
+
+  FROM 
+    rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_formula_packaging_characteristics
+)
+UNPIVOT (column_value FOR column_name IN (    
+
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_formula_presentation_code,
+status_formula_presentation_name_en,
+status_formula_presentation_name_fr,
+status_applicator_code,
+status_applicator_name_en,
+status_applicator_name_fr,
+status_specific_applicator_packaging_code,
+status_specific_applicator_packaging_name_en,
+status_specific_applicator_packaging_name_fr,
+status_other_special_applicator_packaging,
+status_stem_orifice_shape_code,
+status_stem_orifice_shape_name_en,
+status_stem_orifice_shape_name_fr,
+status_stem_orifices_count,
+status_stem_internal_metering_orifice_mm,
+status_valve_origin_code,
+status_valve_origin_name_en,
+status_valve_origin_name_fr,
+status_valve_recommended_usage_code,
+status_valve_recommended_usage_name_en,
+status_valve_recommended_usage_name_fr,
+status_valve_type_code,
+status_valve_type_name_en,
+status_valve_type_name_fr,
+status_actuator_type_code,
+status_actuator_type_name_en,
+status_actuator_type_name_fr,
+status_actuator_orifices_count,
+status_actuator_orifice_size_mm,
+status_insert_reference_name_en,
+status_insert_reference_name_fr,
+status_insert_structure_code,
+status_insert_structure_name_en,
+status_insert_structure_name_fr,
+status_restricted_tail_piece_mm,
+status_product_acquired_range_name_en,
+status_product_acquired_range_name_fr,
+status_vapor_phase_tap_mm
+
+)) 
+WHERE 
+  column_value IN ('OK', 'DIFFERENT')
+GROUP BY 
+  column_name;

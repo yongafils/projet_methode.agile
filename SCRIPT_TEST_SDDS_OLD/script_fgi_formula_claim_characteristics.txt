@@ -1,0 +1,305 @@
+/********************************************/
+
+/********* BUSINESS VALIDATION TEST *********/
+
+/* SDDS-SF : FGI           ***************/
+
+/* Table-BO : FGI_Formula_Claim_Characteristics **********/
+
+/* Requestor : ******************************/
+
+/* Author :YONGA Fils Jacques    ******************************/
+
+/* Creation date : 08/08/2023  *************************/
+
+/* Comment :   ******************************/
+
+/* Update date :  ***************************/
+
+/* Details of the update :  *****************/
+
+
+
+
+
+CREATE or replace table  rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_claim_characteristics
+ AS 
+
+SELECT 
+
+distinct
+
+b.id_formula as formula_id_sk ,
+a.key_formula as formula_source_id_sk ,
+c.cod_formula   as formula_code_sk,                          
+b.cod_dermatology as dermatology_code_sk,
+b.nam_dermatology_en as dermatology_name_en_sk,
+b.nam_dermatology_fr as  dermatology_name_fr_sk,
+b.cod_waterproof as  waterproof_code_sk,
+b.nam_waterproof_en as  waterproof_name_en_sk,
+b.nam_waterproof_fr as  waterproof_name_fr_sk,
+b.cod_claim_evaluation_vegan_formula as  vegan_formula_code_sk,
+b.nam_claim_evaluation_vegan_formula_en as  vegan_formula_name_en_sk,
+b.nam_claim_evaluation_vegan_formula_fr as  vegan_formula_name_fr_sk,
+
+Case when b.cod_hypoallergenic_expected  = 'O' then TRUE
+     when b.cod_hypoallergenic_expected  = 'N' then FALSE
+     when  b.cod_hypoallergenic_expected is null then NULL
+    END as hypoallergenic_expected_flag_sk,
+d.cod_fle_attribute_occ  as formula_cruelty_free_international_certification_code_sk,
+d.nam_fle_attribute_occ_en as  formula_cruelty_free_international_certification_name_en_sk, 
+d.nam_fle_attribute_occ_fr  as  formula_cruelty_free_international_certification_name_fr_sk,
+b.cod_cosmos_certification  as formula_cosmos_certification_code_sk,
+b.nam_cosmos_certification_en  as  formula_cosmos_certification_name_en_sk,
+b.nam_cosmos_certification_fr  as formula_cosmos_certification_name_fr_sk
+
+
+FROM  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula_attribute  b
+LEFT JOIN rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_fla_eu_pd.tbl_dim_formula as a on  b.id_formula = a.id_formula
+LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula as c on b.id_formula = c.id_formula
+LEFT JOIN  rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_fla_eu_pd.tbl_dim_fle_attribute_occ as d on b.id_formula = d.id_fle_attribute_occ and cod_fle_attribute_ref= 'CLAIM_CFI';
+
+
+
+
+CREATE or replace TABLE  `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_formula_claim_characteristics` AS 
+SELECT 
+      t1.formula_id ,t2.formula_id_sk, 
+      CASE 
+        WHEN t1.formula_id = t2.formula_id_sk Or  (t1.formula_id is null  AND t2.formula_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_id,
+    
+
+      t1.formula_source_id,t2.formula_source_id_sk,
+      CASE 
+        WHEN t1.formula_source_id = t2.formula_source_id_sk  Or  (t1.formula_source_id is null  AND t2.formula_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_source_id ,
+
+        t1.formula_code ,t2.formula_code_sk,
+      CASE 
+        WHEN t1.formula_code = t2.formula_code_sk Or  (t1.formula_code is null  AND t2.formula_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_code,
+      
+
+         t1.dermatology_code ,t2.dermatology_code_sk,
+      CASE 
+        WHEN t1.dermatology_code = t2.dermatology_code_sk Or  (t1.dermatology_code is null  AND t2.dermatology_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_dermatology_code,
+
+
+            t1.dermatology_name_en,t2.dermatology_name_en_sk,
+      CASE 
+        WHEN t1.dermatology_name_en =  t2.dermatology_name_en_sk  Or  (t1.dermatology_name_en  is null  AND t2.dermatology_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_dermatology_name_en ,
+
+
+      
+            t1.dermatology_name_fr ,t2.dermatology_name_fr_sk,
+      CASE 
+        WHEN t1.dermatology_name_fr = t2.dermatology_name_fr_sk  Or  (t1.dermatology_name_fr  is null  AND t2.dermatology_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_dermatology_name_fr,
+
+
+
+            t1.waterproof_code ,t2.waterproof_code_sk,
+      CASE 
+        WHEN t1.waterproof_code = t2.waterproof_code_sk  Or  (t1.waterproof_code is null  AND t2.waterproof_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_waterproof_code,
+
+
+
+             t1.waterproof_name_en ,t2.waterproof_name_en_sk,
+      CASE 
+        WHEN t1.waterproof_name_en = t2.waterproof_name_en_sk  Or  (t1.waterproof_name_en is null  AND t2.waterproof_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_waterproof_name_en,
+
+
+             t1.waterproof_name_fr ,t2.waterproof_name_fr_sk,
+      CASE 
+        WHEN t1.waterproof_name_fr = t2.waterproof_name_fr_sk  Or  (t1.waterproof_name_fr is null  AND t2.waterproof_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_waterproof_name_fr,
+
+
+              t1.vegan_formula_code ,t2.vegan_formula_code_sk,
+      CASE 
+        WHEN t1.vegan_formula_code = t2.vegan_formula_code_sk  Or  (t1.vegan_formula_code is null  AND t2.vegan_formula_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_vegan_formula_code,
+
+
+
+             t1.vegan_formula_name_en,t2.vegan_formula_name_en_sk,
+      CASE 
+        WHEN t1.vegan_formula_name_en = t2.vegan_formula_name_en_sk  Or  (t1.vegan_formula_name_en is null  AND t2.vegan_formula_name_en_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_vegan_formula_name_en,
+
+
+
+           t1.vegan_formula_name_fr,t2.vegan_formula_name_fr_sk,
+      CASE 
+        WHEN t1.vegan_formula_name_fr = t2.vegan_formula_name_fr_sk  Or  (t1.vegan_formula_name_fr is null  AND t2.vegan_formula_name_fr_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_vegan_formula_name_fr,
+
+
+
+
+           t1.hypoallergenic_expected_flag ,t2.hypoallergenic_expected_flag_sk,
+      CASE 
+        WHEN t1.hypoallergenic_expected_flag = t2.hypoallergenic_expected_flag_sk  
+        
+        Or  (t1.hypoallergenic_expected_flag is null  AND t2.hypoallergenic_expected_flag_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_hypoallergenic_expected_flag ,
+
+
+
+         t1.formula_cruelty_free_international_certification_code ,t2.formula_cruelty_free_international_certification_code_sk,
+      CASE 
+        WHEN t1.formula_cruelty_free_international_certification_code = t2.formula_cruelty_free_international_certification_code_sk  
+        
+        Or  (t1.formula_cruelty_free_international_certification_code is null  AND t2.formula_cruelty_free_international_certification_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_cruelty_free_international_certification_code,
+
+
+      
+         t1.formula_cruelty_free_international_certification_name_en,t2.formula_cruelty_free_international_certification_name_en_sk,
+      CASE 
+        WHEN t1.formula_cruelty_free_international_certification_name_en = t2.formula_cruelty_free_international_certification_name_en_sk  
+        
+        Or  (t1.formula_cruelty_free_international_certification_name_en is null  AND t2.formula_cruelty_free_international_certification_name_en_sk is null  )
+        
+         THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_cruelty_free_international_certification_name_en,
+
+
+      
+      
+         t1.formula_cruelty_free_international_certification_name_fr,t2.formula_cruelty_free_international_certification_name_fr_sk,
+      CASE 
+        WHEN t1.formula_cruelty_free_international_certification_name_fr = t2.formula_cruelty_free_international_certification_name_fr_sk  
+        
+        Or  (t1.formula_cruelty_free_international_certification_name_fr is null  AND t2.formula_cruelty_free_international_certification_name_fr_sk is null  )
+        
+         THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_cruelty_free_international_certification_name_fr,
+
+
+
+         t1.formula_cosmos_certification_code ,t2.formula_cosmos_certification_code_sk,
+      CASE 
+        WHEN t1.formula_cosmos_certification_code = t2.formula_cosmos_certification_code_sk  
+        
+        Or  (t1.formula_cosmos_certification_code is null  AND t2.formula_cosmos_certification_code_sk is null  )
+        
+         THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_cosmos_certification_code,
+
+
+      
+         t1.formula_cosmos_certification_name_en ,t2.formula_cosmos_certification_name_en_sk,
+      CASE 
+        WHEN t1.formula_cosmos_certification_name_en = t2.formula_cosmos_certification_name_en_sk  
+        
+        Or  (t1.formula_cosmos_certification_name_en is null  AND t2.formula_cosmos_certification_name_en_sk is null  )
+        
+         THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_cosmos_certification_name_en,
+
+
+          t1.formula_cosmos_certification_name_fr ,t2.formula_cosmos_certification_name_fr_sk,
+      CASE 
+        WHEN t1.formula_cosmos_certification_name_fr = t2.formula_cosmos_certification_name_fr_sk  
+        
+        Or  (t1.formula_cosmos_certification_name_fr  is null  AND t2.formula_cosmos_certification_name_fr_sk is null  )
+        
+         THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_cosmos_certification_name_fr,
+      
+      
+      
+      FROM 
+      itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9aa_md_formula_general_information_eu_pd.fgi_formula_claim_characteristics AS t1 full join 
+
+      rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_claim_characteristics AS t2
+    on 
+      t1.formula_id  = t2.formula_id_sk 
+    ORDER BY 
+     t1.formula_id;
+
+
+### the final result with nombre of ok for each column 
+CREATE OR REPLACE TABLE  `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.result_sdds_md_fgi_formula_claim_characteristics` AS
+SELECT 
+  'FGI -formula_claim_characteristics' AS business_object,
+  column_name, 
+  COUNTIF(column_value = 'OK') AS ok_count, 
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count 
+FROM (
+  SELECT 
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_dermatology_code,
+status_dermatology_name_en,
+status_dermatology_name_fr,
+status_waterproof_code,
+status_waterproof_name_en,
+status_waterproof_name_fr,
+status_vegan_formula_code,
+status_vegan_formula_name_en,
+status_vegan_formula_name_fr,
+status_hypoallergenic_expected_flag,
+status_formula_cruelty_free_international_certification_code,
+status_formula_cruelty_free_international_certification_name_en,
+status_formula_cruelty_free_international_certification_name_fr,
+status_formula_cosmos_certification_code,
+status_formula_cosmos_certification_name_en,
+status_formula_cosmos_certification_name_fr
+FROM 
+    rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_formula_claim_characteristics
+)
+UNPIVOT (column_value FOR column_name IN (    
+
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_dermatology_code,
+status_dermatology_name_en,
+status_dermatology_name_fr,
+status_waterproof_code,
+status_waterproof_name_en,
+status_waterproof_name_fr,
+status_vegan_formula_code,
+status_vegan_formula_name_en,
+status_vegan_formula_name_fr,
+status_hypoallergenic_expected_flag,
+status_formula_cruelty_free_international_certification_code,
+status_formula_cruelty_free_international_certification_name_en,
+status_formula_cruelty_free_international_certification_name_fr,
+status_formula_cosmos_certification_code,
+status_formula_cosmos_certification_name_en,
+status_formula_cosmos_certification_name_fr
+
+
+)) 
+WHERE 
+  column_value IN ('OK', 'DIFFERENT')
+GROUP BY 
+  column_name

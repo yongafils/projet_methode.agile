@@ -1,0 +1,289 @@
+
+
+
+
+
+
+
+
+
+
+
+/********************************************/
+
+
+
+
+/********* BUSINESS VALIDATION TEST *********/
+
+
+
+
+/* SDDS-SF : Technology            ***************/
+
+
+
+
+/* Table-BO :TEC - Technology Composition Tree **********/
+
+
+
+
+/* Requestor : ******************************/
+
+
+
+
+/* Author :YONGA fils jacques     ******************************/
+
+
+
+
+/* Creation date : 06/09/2023  *************************/
+
+
+
+
+/* Comment :   ******************************/
+
+
+
+
+/* Update date :  ***************************/
+
+
+
+
+/*  *****************/
+
+
+ 
+
+
+
+
+
+CREATE or REPLACE  table  rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.image_sdds_technology_composition_tree  AS
+
+
+
+
+SELECT 
+distinct
+
+a.id_tec_technology as technology_id_sk,
+
+a.key_tec_technology as technology_source_id_sk,
+
+a.cod_tec_technology as technology_code_sk,
+
+b.txt_tec_version as technology_version_sk,
+
+b.flg_lastversion as last_technology_version_flag_sk,
+
+
+
+
+  CASE
+   WHEN b.txt_tec_version = (
+   SELECT MAX(sub.txt_tec_version)
+   FROM rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology  AS sub
+   WHERE (
+    sub.key_tec_publish_status = 1 OR
+   (sub.key_tec_publish_status = 3 AND sub.flg_lastversion is false AND sub.sys_dat_end IS NULL)
+     ) AND sub.cod_tec_technology = b.cod_tec_technology
+       GROUP BY sub.cod_tec_technology
+      ) THEN TRUE
+   ELSE FALSE
+  END AS last_technology_published_version_flag_sk,
+
+  a.json_composition as composition_tree_sk
+
+
+
+
+
+
+
+
+from  rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_socle_eu_pd.tbl_fct_json_technology_composition
+  as   a 
+
+left join rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_scl_eu_pd.tbl_dim_technology  as b 
+on a.id_tec_technology = b.id_tec_technology   and b.sys_dat_end IS NULL;
+
+
+
+
+
+
+
+    
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+# exhaustive result (comparaison between each 2 columns in the tables and its status ok/ko)
+
+
+
+
+
+
+CREATE OR REPLACE TABLE `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.comparaison_sdds_technology_composition_tree` AS
+
+SELECT
+
+   DISTINCT
+
+
+
+    t1.technology_id,
+    t2.technology_id_sk,
+    CASE
+        WHEN t1.technology_id = t2.technology_id_sk OR (t1.technology_id IS NULL AND t2.technology_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_id,
+
+
+    t1.technology_source_id,
+    t2.technology_source_id_sk,
+    CASE
+        WHEN t1.technology_source_id = t2.technology_source_id_sk OR (t1.technology_source_id IS NULL AND t2.technology_source_id_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_source_id,
+
+
+
+    t1.technology_code,
+    t2.technology_code_sk,
+    CASE
+        WHEN t1.technology_code = t2.technology_code_sk OR (t1.technology_code IS NULL AND t2.technology_code_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_code,
+
+
+    t1.technology_version,
+    t2.technology_version_sk,
+    CASE
+        WHEN t1.technology_version = t2.technology_version_sk OR (t1.technology_version IS NULL AND t2.technology_version_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_technology_version,
+
+
+    t1.last_technology_version_flag,
+    t2.last_technology_version_flag_sk,
+    CASE
+        WHEN t1.last_technology_version_flag = t2.last_technology_version_flag_sk OR (t1.last_technology_version_flag IS NULL AND t2.last_technology_version_flag_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_last_technology_version_flag,
+
+
+
+    t1.last_technology_published_version_flag,
+    t2.last_technology_published_version_flag_sk,
+    CASE
+        WHEN t1.last_technology_published_version_flag = t2.last_technology_published_version_flag_sk 
+        OR (t1.last_technology_published_version_flag IS NULL AND t2.last_technology_published_version_flag_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_last_technology_published_version_flag,
+
+
+
+      t1.composition_tree,
+    t2.composition_tree_sk,
+    CASE
+        WHEN t1.composition_tree  = t2.composition_tree_sk 
+        OR (t1.composition_tree  IS NULL AND t2.composition_tree_sk IS NULL) THEN 'OK'
+        ELSE 'DIFFERENT'
+    END AS status_composition_tree
+
+
+
+   
+FROM
+     `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9ad_technology_eu_pd.tec_technology_composition_tree` AS t1
+full JOIN
+    `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.image_sdds_technology_composition_tree` AS t2
+ON
+    t1.technology_id = t2.technology_id_sk
+
+    
+    
+ORDER BY
+    t1.technology_id;
+
+
+
+
+
+
+### the final result with nombre of ok for each column
+
+
+
+
+
+
+
+
+CREATE or replace table `rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.result_sdds_technology_composition_tree` AS
+
+
+
+
+SELECT
+
+  'TEC - Technology_composition_tree' AS business_object,
+
+  column_name,
+
+  COUNTIF(column_value = 'OK') AS ok_count,
+
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count
+
+FROM (
+
+  SELECT
+
+status_technology_id,
+status_technology_source_id,
+status_technology_code,
+status_technology_version,
+status_last_technology_version_flag,
+status_last_technology_published_version_flag,
+status_composition_tree
+  FROM
+
+   rni-dashbimetier-gbl-ww-dv.TEST_SDDS_TEC.comparaison_sdds_technology_composition_tree
+
+)
+
+UNPIVOT (column_value FOR column_name IN (    
+
+status_technology_id,
+status_technology_source_id,
+status_technology_code,
+status_technology_version,
+status_last_technology_version_flag,
+status_last_technology_published_version_flag,
+status_composition_tree
+  
+))
+
+WHERE
+
+  column_value IN ('OK', 'DIFFERENT')
+
+GROUP BY
+
+  column_name;

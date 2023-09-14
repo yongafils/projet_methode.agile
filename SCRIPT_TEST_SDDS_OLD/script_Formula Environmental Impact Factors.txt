@@ -1,0 +1,822 @@
+/********************************************/
+
+/********* BUSINESS VALIDATION TEST *********/
+
+/* SDDS-SF :FGI        ***************/
+
+/* Table-BO : FGI - Formula Environmental Impact Factors **********/
+
+/* Requestor : ******************************/
+
+/* Author :  YONGA Fils Jacques     ******************************/
+
+/* Creation date : 22/08/2023  *************************/
+
+/* Comment :   ******************************/
+
+/* Update date :  ***************************/
+
+/* Details of the update :  *****************/
+
+
+
+
+
+               
+/*Create View for  Image (respecting the rules in specification file)*/
+
+CREATE OR REPLACE TABLE  rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_environmental_impact_factors AS 
+
+SELECT 
+DISTINCT
+
+a.id_formula as formula_id_sk,
+
+c.key_formula as formula_source_id_sk,
+ 
+a.cod_formula as  formula_code_sk,
+
+b.footprint_global_formula  as  formula_global_footprint_1dose_sk,
+
+b.footprint_end_of_life_acidification as water_acidification_end_life_footprint_1dose_sk,
+
+b.footprint_production_acidification as  water_acidification_production_footprint_1dose_sk,
+
+b.footprint_end_of_life_carbon_footprint as carbon_footprint_end_life_footprint_1dose_sk,
+
+b.footprint_production_carbon_footprint  as  carbon_footprint_production_footprint_1dose_sk,
+
+b.footprint_end_of_life_fossil_resource_depletion as  fossil_resource_depletion_end_life_footprint_1dose_sk,
+ 
+b.footprint_production_fossil_resource_depletion  as  fossil_resource_depletion_production_footprint_1dose_sk,
+
+
+
+
+
+b.footprint_end_of_life_fresh_water_eutrophication as  freshwater_eutrophication_end_life_footprint_1dose_sk,
+
+b.footprint_production_fresh_water_eutrophication as  freshwater_eutrophication_production_footprint_1dose_sk,
+
+b.footprint_end_of_life_human_toxicity as  human_toxicity_via_environment_end_life_footprint_1dose_sk,
+
+b.footprint_production_human_toxicity as  human_toxicity_via_environment_production_footprint_1dose_sk,
+ 
+b.footprint_end_of_life_ionising_radiation as  ionizing_radiation_end_life_footprint_1dose_sk,
+
+b.footprint_production_ionising_radiation as  ionizing_radiation_production_footprint_1dose_sk,
+
+b.footprint_end_of_life_land_transformation as  land_use_end_life_footprint_1dose_sk,
+
+b.footprint_production_land_transformation as  land_use_production_footprint_1dose_sk,
+
+b.footprint_end_of_life_marine_water_eutrophication  as marine_eutrophication_end_life_footprint_1dose_sk,
+
+b.footprint_production_marine_water_eutrophication as marine_eutrophication_production_footprint_1dose_sk,
+
+b.footprint_end_of_life_mineral_resource_depletion as mineral_resource_depletion_end_life_footprint_1dose_sk,
+
+b.footprint_production_mineral_resource_depletion as mineral_resource_depletion_production_footprint_1dose_sk,
+
+
+
+
+
+
+
+b.footprint_end_of_life_ozone_layer_depletion as ozone_depletion_end_life_footprint_1dose_sk,
+
+b.footprint_production_ozone_layer_depletion as ozone_depletion_production_footprint_1dose_sk,
+
+b.footprint_end_of_life_particulate_matter as  particulate_matter_end_life_footprint_1dose_sk,
+
+b.footprint_production_particulate_matter as particulate_matter_production_footprint_1dose_sk,
+
+b.footprint_end_of_life_photochemical_ozone as  photochemical_ozone_formation_end_life_footprint_1dose_sk,
+
+b.footprint_production_photochemical_ozone as photochemical_ozone_formation_production_footprint_1dose_sk,
+
+b.footprint_end_of_life_terrestrial_eutrophication as terrestrial_eutrophication_end_life_footprint_1dose_sk,
+
+b.footprint_production_terrestrial_eutrophication as  terrestrial_eutrophication_production_footprint_1dose_sk,
+
+b.footprint_end_of_life_aquatic_toxicity as freshwater_ecotoxicity_end_life_footprint_1dose_sk,
+ 
+b.footprint_production_aquatic_toxicity as freshwater_ecotoxicity_production_footprint_1dose_sk,
+
+
+
+
+
+
+
+
+b.footprint_end_of_life_water_scarcity as  water_scarcity_end_life_footprint_1dose_sk,
+
+b.footprint_production_water_scarcity as water_scarcity_production_footprint_1dose_sk,
+ 
+b.footprint_usage_acidification as  water_acidification_use_footprint_1dose_sk,
+
+b.footprint_usage_carbon_footprint as  carbon_footprint_use_footprint_1dose_sk,
+
+b.footprint_usage_fossile_resource_depletion as fossil_resource_depletion_use_footprint_1dose_sk,
+ 
+b.footprint_usage_fresh_water_eutrophication as  freshwater_eutrophication_use_footprint_1dose_sk,
+
+b.Footprint_Usage_Human_toxicity as  human_toxicity_via_environment_use_footprint_1dose_sk,
+ 
+b.footprint_usage_ionising_radiation as  ionizing_radiation_use_footprint_1dose_sk,
+
+b.footprint_usage_land_transformation as  land_use_use_footprint_1dose_sk,
+
+b.footprint_usage_marine_water_eutrophication as marine_eutrophication_use_footprint_1dose_sk,
+
+b.footprint_usage_mineral_resource_depletion as  mineral_resource_depletion_use_footprint_1dose_sk,
+
+
+
+
+
+b.footprint_usage_ozone_layer_depletion as ozone_depletion_use_footprint_1dose_sk,
+
+b.footprint_usage_particulate_matter as particulate_matter_use_footprint_1dose_sk,
+
+b.footprint_usage_photochemical_ozone as photochemical_ozone_formation_use_footprint_1dose_sk,
+
+b.footprint_usage_terrestrial_eutrophication as  terrestrial_eutrophication_use_footprint_1dose_sk,
+ 
+b.footprint_usage_aquatic_toxicity as  freshwater_ecotoxicity_use_footprint_1dose_sk,
+
+b.footprint_usage_water_scarcity as  water_scarcity_use_footprint_1dose_sk,
+
+b.footprint_usage_formula as  formula_use_footprint_1dose_sk
+
+
+
+FROM
+    rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula_attribute as b
+  LEFT JOIN
+    rni-sknow-gbl-ww-pd.sknow_bqdset_dtm_formulation_eu_pd.tbl_dim_formula  as a on  a.id_formula = b.id_formula
+    left join rni-sknow-gbl-ww-pd.sknow_bqdset_dwh_fla_eu_pd.tbl_dim_formula as c on  a.id_formula = c.id_formula;
+
+
+
+
+
+
+
+ #exhaustive result (comparaison between each 2 columns in the tables and its status ok/ko)
+
+  CREATE OR REPLACE TABLE  rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_formula_environmental_impact_factors AS 
+   SELECT 
+      t1.formula_id,t2.formula_id_sk, 
+      CASE 
+        WHEN t1.formula_id = t2.formula_id_sk  Or  (t1.formula_id is null  AND t2.formula_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_id,
+
+
+        t1.formula_source_id,t2.formula_source_id_sk, 
+      CASE 
+        WHEN t1.formula_source_id = t2.formula_source_id_sk Or  (t1.formula_source_id is null  AND t2.formula_source_id_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_source_id,
+
+
+       t1.formula_code,t2.formula_code_sk, 
+      CASE 
+        WHEN t1.formula_code = t2.formula_code_sk Or  (t1.formula_code  is null  AND t2.formula_code_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_code,
+
+
+
+      
+       t1.formula_global_footprint_1dose ,t2.formula_global_footprint_1dose_sk, 
+      CASE 
+        WHEN t1.formula_global_footprint_1dose = t2.formula_global_footprint_1dose_sk  Or 
+        
+         (t1.formula_global_footprint_1dose  is null  AND t2.formula_global_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_global_footprint_1dose,
+
+
+         t1.water_acidification_end_life_footprint_1dose ,t2.water_acidification_end_life_footprint_1dose_sk, 
+      CASE 
+        WHEN t1.water_acidification_end_life_footprint_1dose = t2.water_acidification_end_life_footprint_1dose_sk Or 
+        
+         (t1.water_acidification_end_life_footprint_1dose is null  AND t2.water_acidification_end_life_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_water_acidification_end_life_footprint_1dose,
+
+
+      t1.water_acidification_production_footprint_1dose ,t2.water_acidification_production_footprint_1dose_sk, 
+      CASE 
+        WHEN t1.water_acidification_production_footprint_1dose  = t2.water_acidification_production_footprint_1dose_sk Or 
+        
+         (t1.water_acidification_production_footprint_1dose  is null  AND t2.water_acidification_production_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_water_acidification_production_footprint_1dose,
+
+
+
+      
+      t1.carbon_footprint_end_life_footprint_1dose,t2.carbon_footprint_end_life_footprint_1dose_sk, 
+      CASE 
+        WHEN t1.carbon_footprint_end_life_footprint_1dose  = t2.carbon_footprint_end_life_footprint_1dose_sk Or 
+        
+         (t1.carbon_footprint_end_life_footprint_1dose  is null  AND t2.carbon_footprint_end_life_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_carbon_footprint_end_life_footprint_1dose,
+
+
+      t1.carbon_footprint_production_footprint_1dose ,t2.carbon_footprint_production_footprint_1dose_sk, 
+      CASE 
+        WHEN t1.carbon_footprint_production_footprint_1dose   = t2.carbon_footprint_production_footprint_1dose_sk Or 
+        
+         (t1.carbon_footprint_production_footprint_1dose  is null  AND t2.carbon_footprint_production_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_carbon_footprint_production_footprint_1dose ,
+
+
+           t1.fossil_resource_depletion_end_life_footprint_1dose ,t2.fossil_resource_depletion_end_life_footprint_1dose_sk, 
+      CASE 
+        WHEN t1.fossil_resource_depletion_end_life_footprint_1dose  = t2.fossil_resource_depletion_end_life_footprint_1dose_sk  Or 
+        
+         (t1.fossil_resource_depletion_end_life_footprint_1dose   is null  AND t2.fossil_resource_depletion_end_life_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fossil_resource_depletion_end_life_footprint_1dose ,
+
+
+
+      
+           t1.fossil_resource_depletion_production_footprint_1dose ,t2.fossil_resource_depletion_production_footprint_1dose_sk, 
+      CASE 
+        WHEN t1.fossil_resource_depletion_production_footprint_1dose  = t2.fossil_resource_depletion_production_footprint_1dose_sk   Or 
+        
+         (t1.fossil_resource_depletion_production_footprint_1dose   is null  AND t2.fossil_resource_depletion_production_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fossil_resource_depletion_production_footprint_1dose ,
+
+
+
+
+         t1.freshwater_eutrophication_end_life_footprint_1dose ,t2.freshwater_eutrophication_end_life_footprint_1dose_sk, 
+      CASE 
+        WHEN t1.freshwater_eutrophication_end_life_footprint_1dose  = t2.freshwater_eutrophication_end_life_footprint_1dose_sk   Or 
+        
+         (t1.freshwater_eutrophication_end_life_footprint_1dose   is null  AND t2.freshwater_eutrophication_end_life_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_freshwater_eutrophication_end_life_footprint_1dose,
+
+
+
+        t1.freshwater_eutrophication_production_footprint_1dose ,t2.freshwater_eutrophication_production_footprint_1dose_sk, 
+      CASE 
+        WHEN t1.freshwater_eutrophication_production_footprint_1dose  = t2.freshwater_eutrophication_production_footprint_1dose_sk   Or 
+        
+         (t1.freshwater_eutrophication_production_footprint_1dose   is null  AND t2.freshwater_eutrophication_production_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_freshwater_eutrophication_production_footprint_1dose,
+
+
+
+      
+        t1.human_toxicity_via_environment_end_life_footprint_1dose ,t2.human_toxicity_via_environment_end_life_footprint_1dose_sk, 
+      CASE 
+        WHEN t1.human_toxicity_via_environment_end_life_footprint_1dose  = t2.human_toxicity_via_environment_end_life_footprint_1dose_sk   Or 
+        
+         (t1.human_toxicity_via_environment_end_life_footprint_1dose   is null  AND t2.human_toxicity_via_environment_end_life_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_human_toxicity_via_environment_end_life_footprint_1dose,
+
+
+       t1.human_toxicity_via_environment_production_footprint_1dose ,t2.human_toxicity_via_environment_production_footprint_1dose_sk, 
+      CASE 
+        WHEN t1.human_toxicity_via_environment_production_footprint_1dose = t2.human_toxicity_via_environment_production_footprint_1dose_sk   Or 
+        
+         (t1.human_toxicity_via_environment_production_footprint_1dose   is null  AND t2.human_toxicity_via_environment_production_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_human_toxicity_via_environment_production_footprint_1dose,
+
+
+
+      
+       t1.ionizing_radiation_end_life_footprint_1dose ,t2.ionizing_radiation_end_life_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.ionizing_radiation_end_life_footprint_1dose = t2.ionizing_radiation_end_life_footprint_1dose_sk   Or 
+        
+         (t1.ionizing_radiation_end_life_footprint_1dose  is null  AND t2.ionizing_radiation_end_life_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_ionizing_radiation_end_life_footprint_1dose,
+
+
+      
+       t1.ionizing_radiation_production_footprint_1dose ,t2.ionizing_radiation_production_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.ionizing_radiation_production_footprint_1dose = t2.ionizing_radiation_production_footprint_1dose_sk   Or 
+        
+         (t1.ionizing_radiation_production_footprint_1dose is null  AND t2.ionizing_radiation_production_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_ionizing_radiation_production_footprint_1dose,
+
+
+
+       t1.land_use_end_life_footprint_1dose ,t2.land_use_end_life_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.land_use_end_life_footprint_1dose = t2.land_use_end_life_footprint_1dose_sk   Or 
+        
+         (t1.land_use_end_life_footprint_1dose is null  AND t2.land_use_end_life_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_land_use_end_life_footprint_1dose,
+
+
+
+
+      t1.land_use_production_footprint_1dose ,t2.land_use_production_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.land_use_production_footprint_1dose = t2.land_use_production_footprint_1dose_sk  Or 
+        
+         (t1.land_use_production_footprint_1dose is null  AND t2.land_use_production_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_land_use_production_footprint_1dose,
+
+
+         t1.marine_eutrophication_end_life_footprint_1dose ,t2.marine_eutrophication_end_life_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.marine_eutrophication_end_life_footprint_1dose= t2.marine_eutrophication_end_life_footprint_1dose_sk  Or 
+        
+         (t1.marine_eutrophication_end_life_footprint_1dose is null  AND t2.marine_eutrophication_end_life_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_marine_eutrophication_end_life_footprint_1dose,
+
+
+       t1.marine_eutrophication_production_footprint_1dose ,t2.marine_eutrophication_production_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.marine_eutrophication_production_footprint_1dose = t2.marine_eutrophication_production_footprint_1dose_sk  Or 
+        
+         (t1.marine_eutrophication_production_footprint_1dose  is null  AND t2.marine_eutrophication_production_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_marine_eutrophication_production_footprint_1dose,
+
+
+
+      
+       t1.mineral_resource_depletion_end_life_footprint_1dose ,t2.mineral_resource_depletion_end_life_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.mineral_resource_depletion_end_life_footprint_1dose = t2.mineral_resource_depletion_end_life_footprint_1dose_sk  Or 
+        
+         (t1.mineral_resource_depletion_end_life_footprint_1dose  is null  AND t2.mineral_resource_depletion_end_life_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_mineral_resource_depletion_end_life_footprint_1dose,
+
+
+
+         t1.mineral_resource_depletion_production_footprint_1dose  ,t2.mineral_resource_depletion_production_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.mineral_resource_depletion_production_footprint_1dose  = t2.mineral_resource_depletion_production_footprint_1dose_sk   Or 
+        
+         (t1.mineral_resource_depletion_production_footprint_1dose   is null  AND t2.mineral_resource_depletion_production_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_mineral_resource_depletion_production_footprint_1dose,
+
+
+
+
+       t1.ozone_depletion_end_life_footprint_1dose  ,t2.ozone_depletion_end_life_footprint_1dose_sk,
+      CASE 
+        WHEN t1.ozone_depletion_end_life_footprint_1dose  = t2.ozone_depletion_end_life_footprint_1dose_sk   Or 
+        
+         (t1.ozone_depletion_end_life_footprint_1dose   is null  AND t2.ozone_depletion_end_life_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_ozone_depletion_end_life_footprint_1dose,
+
+
+      
+       t1.ozone_depletion_production_footprint_1dose   ,t2.ozone_depletion_production_footprint_1dose_sk,
+      CASE 
+        WHEN t1.ozone_depletion_production_footprint_1dose   = t2.ozone_depletion_production_footprint_1dose_sk    Or 
+        
+         (t1.ozone_depletion_production_footprint_1dose   is null  AND t2.ozone_depletion_production_footprint_1dose_sk    is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_ozone_depletion_production_footprint_1dose ,
+
+
+
+
+      
+       t1.particulate_matter_end_life_footprint_1dose  ,t2.particulate_matter_end_life_footprint_1dose_sk,
+      CASE 
+        WHEN t1.particulate_matter_end_life_footprint_1dose   = t2.particulate_matter_end_life_footprint_1dose_sk   Or 
+        
+         (t1.particulate_matter_end_life_footprint_1dose  is null  AND t2.particulate_matter_end_life_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_particulate_matter_end_life_footprint_1dose ,
+      
+
+
+      
+       t1.particulate_matter_production_footprint_1dose  ,t2.particulate_matter_production_footprint_1dose_sk,
+      CASE 
+        WHEN t1.particulate_matter_production_footprint_1dose  = t2.particulate_matter_production_footprint_1dose_sk   Or 
+        
+         (t1.particulate_matter_production_footprint_1dose is null  AND t2.particulate_matter_production_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_particulate_matter_production_footprint_1dose,
+
+
+
+       t1.photochemical_ozone_formation_end_life_footprint_1dose  ,t2.photochemical_ozone_formation_end_life_footprint_1dose_sk,
+      CASE 
+        WHEN t1.photochemical_ozone_formation_end_life_footprint_1dose = t2.photochemical_ozone_formation_end_life_footprint_1dose_sk   Or 
+        
+         (t1.photochemical_ozone_formation_end_life_footprint_1dose is null  AND t2.photochemical_ozone_formation_end_life_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_photochemical_ozone_formation_end_life_footprint_1dose,
+
+
+
+
+        t1.photochemical_ozone_formation_production_footprint_1dose  ,t2.photochemical_ozone_formation_production_footprint_1dose_sk,
+      CASE 
+        WHEN t1.photochemical_ozone_formation_production_footprint_1dose = t2.photochemical_ozone_formation_production_footprint_1dose_sk   Or 
+        
+         (t1.photochemical_ozone_formation_production_footprint_1dose is null  AND t2.photochemical_ozone_formation_production_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_photochemical_ozone_formation_production_footprint_1dose,
+
+
+
+
+
+      
+        t1.terrestrial_eutrophication_end_life_footprint_1dose  ,t2.terrestrial_eutrophication_end_life_footprint_1dose_sk,
+      CASE 
+        WHEN t1.terrestrial_eutrophication_end_life_footprint_1dose = t2.terrestrial_eutrophication_end_life_footprint_1dose_sk   Or 
+        
+         (t1.terrestrial_eutrophication_end_life_footprint_1dose  is null  AND t2.terrestrial_eutrophication_end_life_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_terrestrial_eutrophication_end_life_footprint_1dose,
+
+
+
+
+         t1.terrestrial_eutrophication_production_footprint_1dose  ,t2.terrestrial_eutrophication_production_footprint_1dose_sk,
+      CASE 
+        WHEN t1.terrestrial_eutrophication_production_footprint_1dose = t2.terrestrial_eutrophication_production_footprint_1dose_sk   Or 
+        
+         (t1.terrestrial_eutrophication_production_footprint_1dose  is null  AND t2.terrestrial_eutrophication_production_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_terrestrial_eutrophication_production_footprint_1dose,
+
+
+
+
+      
+         t1.freshwater_ecotoxicity_end_life_footprint_1dose ,t2.freshwater_ecotoxicity_end_life_footprint_1dose_sk,
+      CASE 
+        WHEN t1.freshwater_ecotoxicity_end_life_footprint_1dose = t2.freshwater_ecotoxicity_end_life_footprint_1dose_sk   Or 
+        
+         (t1.freshwater_ecotoxicity_end_life_footprint_1dose  is null  AND t2.freshwater_ecotoxicity_end_life_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_freshwater_ecotoxicity_end_life_footprint_1dose,
+
+
+
+
+       t1.freshwater_ecotoxicity_production_footprint_1dose ,t2.freshwater_ecotoxicity_production_footprint_1dose_sk,
+      CASE 
+        WHEN t1.freshwater_ecotoxicity_production_footprint_1dose  = t2.freshwater_ecotoxicity_production_footprint_1dose_sk   Or 
+        
+         (t1.freshwater_ecotoxicity_production_footprint_1dose   is null  AND t2.freshwater_ecotoxicity_production_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_freshwater_ecotoxicity_production_footprint_1dose,
+
+
+
+      
+       t1.water_scarcity_end_life_footprint_1dose ,t2.water_scarcity_end_life_footprint_1dose_sk,
+      CASE 
+        WHEN t1.water_scarcity_end_life_footprint_1dose = t2.water_scarcity_end_life_footprint_1dose_sk   Or 
+        
+         (t1.water_scarcity_end_life_footprint_1dose   is null  AND t2.water_scarcity_end_life_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_water_scarcity_end_life_footprint_1dose,
+
+
+
+       t1.water_scarcity_production_footprint_1dose ,t2.water_scarcity_production_footprint_1dose_sk,
+      CASE 
+        WHEN t1.water_scarcity_production_footprint_1dose = t2.water_scarcity_production_footprint_1dose_sk   Or 
+        
+         (t1.water_scarcity_production_footprint_1dose   is null  AND t2.water_scarcity_production_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_water_scarcity_production_footprint_1dose,
+
+
+
+       t1.water_acidification_use_footprint_1dose ,t2.water_acidification_use_footprint_1dose_sk,
+      CASE 
+        WHEN t1.water_acidification_use_footprint_1dose = t2.water_acidification_use_footprint_1dose_sk   Or 
+        
+         (t1.water_acidification_use_footprint_1dose  is null  AND t2.water_acidification_use_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_water_acidification_use_footprint_1dose,
+
+
+
+
+      
+       t1.carbon_footprint_use_footprint_1dose ,t2.carbon_footprint_use_footprint_1dose_sk,
+      CASE 
+        WHEN t1.carbon_footprint_use_footprint_1dose = t2.carbon_footprint_use_footprint_1dose_sk   Or 
+        
+         (t1.carbon_footprint_use_footprint_1dose  is null  AND t2.carbon_footprint_use_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_carbon_footprint_use_footprint_1dose ,
+
+
+
+
+      
+       t1.fossil_resource_depletion_use_footprint_1dose,t2.fossil_resource_depletion_use_footprint_1dose_sk,
+      CASE 
+        WHEN t1.fossil_resource_depletion_use_footprint_1dose = t2.fossil_resource_depletion_use_footprint_1dose_sk    Or 
+        
+         (t1.fossil_resource_depletion_use_footprint_1dose  is null  AND t2.fossil_resource_depletion_use_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_fossil_resource_depletion_use_footprint_1dose ,
+
+
+     
+
+       t1.freshwater_eutrophication_use_footprint_1dose ,t2.freshwater_eutrophication_use_footprint_1dose_sk,
+      CASE 
+        WHEN t1.freshwater_eutrophication_use_footprint_1dose = t2.freshwater_eutrophication_use_footprint_1dose_sk    Or 
+        
+         (t1.freshwater_eutrophication_use_footprint_1dose   is null  AND t2.freshwater_eutrophication_use_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_freshwater_eutrophication_use_footprint_1dose ,
+
+
+      
+       t1.human_toxicity_via_environment_use_footprint_1dose ,t2.human_toxicity_via_environment_use_footprint_1dose_sk,
+      CASE 
+        WHEN t1.human_toxicity_via_environment_use_footprint_1dose = t2.human_toxicity_via_environment_use_footprint_1dose_sk    Or 
+        
+         (t1.human_toxicity_via_environment_use_footprint_1dose   is null  AND t2.human_toxicity_via_environment_use_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_human_toxicity_via_environment_use_footprint_1dose  ,
+
+
+
+       t1.ionizing_radiation_use_footprint_1dose ,t2.ionizing_radiation_use_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.ionizing_radiation_use_footprint_1dose  = t2.ionizing_radiation_use_footprint_1dose_sk     Or 
+        
+         (t1.ionizing_radiation_use_footprint_1dose   is null  AND t2.ionizing_radiation_use_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_ionizing_radiation_use_footprint_1dose ,
+
+
+
+      
+       t1.land_use_use_footprint_1dose ,t2.land_use_use_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.land_use_use_footprint_1dose  = t2.land_use_use_footprint_1dose_sk    Or 
+        
+         (t1.land_use_use_footprint_1dose  is null  AND t2.land_use_use_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_land_use_use_footprint_1dose ,
+
+
+
+      
+       t1.marine_eutrophication_use_footprint_1dose ,t2.marine_eutrophication_use_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.marine_eutrophication_use_footprint_1dose  = t2.marine_eutrophication_use_footprint_1dose_sk    Or 
+        
+         (t1.marine_eutrophication_use_footprint_1dose is null  AND t2.marine_eutrophication_use_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_marine_eutrophication_use_footprint_1dose ,
+
+
+
+
+
+        t1.mineral_resource_depletion_use_footprint_1dose ,t2.mineral_resource_depletion_use_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.mineral_resource_depletion_use_footprint_1dose = t2.mineral_resource_depletion_use_footprint_1dose_sk     Or 
+        
+         (t1.mineral_resource_depletion_use_footprint_1dose    is null  AND t2.mineral_resource_depletion_use_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_mineral_resource_depletion_use_footprint_1dose ,
+
+
+
+       t1.ozone_depletion_use_footprint_1dose ,t2.ozone_depletion_use_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.ozone_depletion_use_footprint_1dose = t2.ozone_depletion_use_footprint_1dose_sk    Or 
+        
+         (t1.ozone_depletion_use_footprint_1dose    is null  AND t2.ozone_depletion_use_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_ozone_depletion_use_footprint_1dose,
+
+
+
+
+         t1.particulate_matter_use_footprint_1dose ,t2.particulate_matter_use_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.particulate_matter_use_footprint_1dose = t2.particulate_matter_use_footprint_1dose_sk     Or 
+        
+         (t1.particulate_matter_use_footprint_1dose     is null  AND t2.particulate_matter_use_footprint_1dose_sk    is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_particulate_matter_use_footprint_1dose,
+
+
+
+
+       t1.photochemical_ozone_formation_use_footprint_1dose ,t2.photochemical_ozone_formation_use_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.photochemical_ozone_formation_use_footprint_1dose = t2.photochemical_ozone_formation_use_footprint_1dose_sk     Or 
+        
+         (t1.photochemical_ozone_formation_use_footprint_1dose     is null  AND t2.photochemical_ozone_formation_use_footprint_1dose_sk    is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_photochemical_ozone_formation_use_footprint_1dose,
+
+
+      
+       t1.terrestrial_eutrophication_use_footprint_1dose ,t2.terrestrial_eutrophication_use_footprint_1dose_sk ,
+      CASE 
+        WHEN t1.terrestrial_eutrophication_use_footprint_1dose = t2.terrestrial_eutrophication_use_footprint_1dose_sk     Or 
+        
+         (t1.terrestrial_eutrophication_use_footprint_1dose    is null  AND t2.terrestrial_eutrophication_use_footprint_1dose_sk    is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_terrestrial_eutrophication_use_footprint_1dose,
+
+
+
+      t1.freshwater_ecotoxicity_use_footprint_1dose,t2.freshwater_ecotoxicity_use_footprint_1dose_sk,
+      CASE 
+        WHEN t1.freshwater_ecotoxicity_use_footprint_1dose = t2.freshwater_ecotoxicity_use_footprint_1dose_sk     Or 
+        
+         (t1.freshwater_ecotoxicity_use_footprint_1dose    is null  AND t2.freshwater_ecotoxicity_use_footprint_1dose_sk   is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_freshwater_ecotoxicity_use_footprint_1dose,
+
+
+
+      
+      t1.water_scarcity_use_footprint_1dose,t2.water_scarcity_use_footprint_1dose_sk,
+      CASE 
+        WHEN t1.water_scarcity_use_footprint_1dose = t2.water_scarcity_use_footprint_1dose_sk    Or 
+        
+         (t1.water_scarcity_use_footprint_1dose  is null  AND t2.water_scarcity_use_footprint_1dose_sk  is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_water_scarcity_use_footprint_1dose,
+
+
+       
+      t1.formula_use_footprint_1dose ,t2.formula_use_footprint_1dose_sk,
+      CASE 
+        WHEN t1.formula_use_footprint_1dose = t2.formula_use_footprint_1dose_sk    Or 
+        
+         (t1.formula_use_footprint_1dose is null  AND t2.formula_use_footprint_1dose_sk is null  ) THEN 'OK'
+        ELSE 'DIFFERENT'
+      END AS status_formula_use_footprint_1dose,
+
+
+
+ FROM 
+      itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9aa_md_formula_general_information_eu_pd.fgi_formula_environmental_impact_factors AS t1 full join 
+
+      rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.image_sdds_md_fgi_formula_environmental_impact_factors AS t2
+    ON 
+      t1.formula_id = t2.formula_id_sk
+    ORDER BY 
+     t1.formula_id;
+
+### the final result with nombre of ok for each column 
+
+
+CREATE OR REPLACE TABLE  `rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.result_sdds_md_fgi_formula_environmental_impact_factors` AS
+SELECT 
+  'FGI - formula_environmental_impact_factors' AS business_object,
+  column_name, 
+  COUNTIF(column_value = 'OK') AS ok_count, 
+  COUNTIF(column_value = 'DIFFERENT') AS ko_count 
+FROM (
+  SELECT 
+
+
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_formula_global_footprint_1dose,
+status_water_acidification_end_life_footprint_1dose,
+status_water_acidification_production_footprint_1dose,
+status_carbon_footprint_end_life_footprint_1dose,
+status_carbon_footprint_production_footprint_1dose,
+status_fossil_resource_depletion_end_life_footprint_1dose,
+status_fossil_resource_depletion_production_footprint_1dose,
+status_freshwater_eutrophication_end_life_footprint_1dose,
+status_freshwater_eutrophication_production_footprint_1dose,
+status_human_toxicity_via_environment_end_life_footprint_1dose,
+status_human_toxicity_via_environment_production_footprint_1dose,
+status_ionizing_radiation_end_life_footprint_1dose,
+status_ionizing_radiation_production_footprint_1dose,
+status_land_use_end_life_footprint_1dose,
+status_land_use_production_footprint_1dose,
+status_marine_eutrophication_end_life_footprint_1dose,
+status_marine_eutrophication_production_footprint_1dose,
+status_mineral_resource_depletion_end_life_footprint_1dose,
+status_mineral_resource_depletion_production_footprint_1dose,
+status_ozone_depletion_end_life_footprint_1dose,
+status_ozone_depletion_production_footprint_1dose,
+status_particulate_matter_end_life_footprint_1dose,
+status_particulate_matter_production_footprint_1dose,
+status_photochemical_ozone_formation_end_life_footprint_1dose,
+status_photochemical_ozone_formation_production_footprint_1dose,
+status_terrestrial_eutrophication_production_footprint_1dose,
+status_freshwater_ecotoxicity_end_life_footprint_1dose,
+status_freshwater_ecotoxicity_production_footprint_1dose,
+status_water_scarcity_end_life_footprint_1dose,
+status_water_scarcity_production_footprint_1dose,
+status_water_acidification_use_footprint_1dose,
+status_carbon_footprint_use_footprint_1dose,
+status_fossil_resource_depletion_use_footprint_1dose,
+status_freshwater_eutrophication_use_footprint_1dose,
+status_human_toxicity_via_environment_use_footprint_1dose,
+status_ionizing_radiation_use_footprint_1dose,
+status_land_use_use_footprint_1dose,
+status_marine_eutrophication_use_footprint_1dose,
+status_mineral_resource_depletion_use_footprint_1dose,
+status_ozone_depletion_use_footprint_1dose,
+status_particulate_matter_use_footprint_1dose,
+status_photochemical_ozone_formation_use_footprint_1dose,
+status_terrestrial_eutrophication_use_footprint_1dose,
+status_freshwater_ecotoxicity_use_footprint_1dose,
+status_water_scarcity_use_footprint_1dose,
+status_formula_use_footprint_1dose
+
+
+
+
+  FROM 
+    rni-dashbimetier-gbl-ww-dv.test_sdds_md_fgi.test_sdds_md_fgi_formula_environmental_impact_factors
+)
+UNPIVOT (column_value FOR column_name IN (    
+status_formula_id,
+status_formula_source_id,
+status_formula_code,
+status_formula_global_footprint_1dose,
+status_water_acidification_end_life_footprint_1dose,
+status_water_acidification_production_footprint_1dose,
+status_carbon_footprint_end_life_footprint_1dose,
+status_carbon_footprint_production_footprint_1dose,
+status_fossil_resource_depletion_end_life_footprint_1dose,
+status_fossil_resource_depletion_production_footprint_1dose,
+status_freshwater_eutrophication_end_life_footprint_1dose,
+status_freshwater_eutrophication_production_footprint_1dose,
+status_human_toxicity_via_environment_end_life_footprint_1dose,
+status_human_toxicity_via_environment_production_footprint_1dose,
+status_ionizing_radiation_end_life_footprint_1dose,
+status_ionizing_radiation_production_footprint_1dose,
+status_land_use_end_life_footprint_1dose,
+status_land_use_production_footprint_1dose,
+status_marine_eutrophication_end_life_footprint_1dose,
+status_marine_eutrophication_production_footprint_1dose,
+status_mineral_resource_depletion_end_life_footprint_1dose,
+status_mineral_resource_depletion_production_footprint_1dose,
+status_ozone_depletion_end_life_footprint_1dose,
+status_ozone_depletion_production_footprint_1dose,
+status_particulate_matter_end_life_footprint_1dose,
+status_particulate_matter_production_footprint_1dose,
+status_photochemical_ozone_formation_end_life_footprint_1dose,
+status_photochemical_ozone_formation_production_footprint_1dose,
+status_terrestrial_eutrophication_production_footprint_1dose,
+status_freshwater_ecotoxicity_end_life_footprint_1dose,
+status_freshwater_ecotoxicity_production_footprint_1dose,
+status_water_scarcity_end_life_footprint_1dose,
+status_water_scarcity_production_footprint_1dose,
+status_water_acidification_use_footprint_1dose,
+status_carbon_footprint_use_footprint_1dose,
+status_fossil_resource_depletion_use_footprint_1dose,
+status_freshwater_eutrophication_use_footprint_1dose,
+status_human_toxicity_via_environment_use_footprint_1dose,
+status_ionizing_radiation_use_footprint_1dose,
+status_land_use_use_footprint_1dose,
+status_marine_eutrophication_use_footprint_1dose,
+status_mineral_resource_depletion_use_footprint_1dose,
+status_ozone_depletion_use_footprint_1dose,
+status_particulate_matter_use_footprint_1dose,
+status_photochemical_ozone_formation_use_footprint_1dose,
+status_terrestrial_eutrophication_use_footprint_1dose,
+status_freshwater_ecotoxicity_use_footprint_1dose,
+status_water_scarcity_use_footprint_1dose,
+status_formula_use_footprint_1dose
+)) 
+WHERE 
+  column_value IN ('OK', 'DIFFERENT')
+GROUP BY 
+  column_name

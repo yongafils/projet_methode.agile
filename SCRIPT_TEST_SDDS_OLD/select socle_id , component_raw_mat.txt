@@ -1,0 +1,9 @@
+select socle_id , component_raw_material_id FROM   
+  /*`rni-dashbimetier-gbl-ww-dv.TEST_SDDS_SOC.image_sdds_composition_architecture` */
+
+
+  /*where socle_id_sk = "ac9a3206-5adb-4430-a705-2e561bdc4a74" and component_raw_material_id_sk="c13899ae-bb77-436a-9e7e-632bd31cf768"*/
+
+   `itg-btdppublished-gbl-ww-pd.btdp_ds_c2_9ac_socle_eu_pd.soc_socle_composition_architecture`
+
+   where socle_id = "722793d2-4f17-4c4c-80d0-0ad524bd01b4" and component_raw_material_id="eb5b2c19-5dcb-4702-b6c9-3964c716e568"
